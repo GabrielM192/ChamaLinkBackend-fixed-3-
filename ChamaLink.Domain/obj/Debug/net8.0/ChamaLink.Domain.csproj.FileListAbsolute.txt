@@ -1,0 +1,11 @@
+/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Domain/bin/Debug/net8.0/ChamaLink.Domain.deps.json
+/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Domain/bin/Debug/net8.0/ChamaLink.Domain.dll
+/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Domain/bin/Debug/net8.0/ChamaLink.Domain.pdb
+/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Domain/obj/Debug/net8.0/ChamaLink.Domain.GeneratedMSBuildEditorConfig.editorconfig
+/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Domain/obj/Debug/net8.0/ChamaLink.Domain.AssemblyInfoInputs.cache
+/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Domain/obj/Debug/net8.0/ChamaLink.Domain.AssemblyInfo.cs
+/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Domain/obj/Debug/net8.0/ChamaLink.Domain.csproj.CoreCompileInputs.cache
+/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Domain/obj/Debug/net8.0/ChamaLink.Domain.dll
+/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Domain/obj/Debug/net8.0/refint/ChamaLink.Domain.dll
+/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Domain/obj/Debug/net8.0/ChamaLink.Domain.pdb
+/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Domain/obj/Debug/net8.0/ref/ChamaLink.Domain.dll

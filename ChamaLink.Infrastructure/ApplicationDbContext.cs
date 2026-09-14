@@ -1,0 +1,421 @@
+using ChamaLink.Domain;
+using ChamaLink.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+
+namespace ChamaLink.Infrastructure;
+
+public class ApplicationDbContext : DbContext
+{
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+    {
+    }
+
+    public DbSet<User> Users => Set<User>();
+    public DbSet<Group> Groups => Set<Group>();
+    public DbSet<GroupSettings> GroupSettings => Set<GroupSettings>(); // Fixed entity class name
+    public DbSet<GroupMember> GroupMembers => Set<GroupMember>();
+    public DbSet<Account> Accounts => Set<Account>();
+    public DbSet<LedgerEntry> LedgerEntries => Set<LedgerEntry>();
+    public DbSet<GroupEvent> GroupEvents => Set<GroupEvent>();
+
+    // NEW: stores "Withdraw / Transfer fund" rows found in M-Koba
+    // statements, so they are kept for the treasurer to review instead of
+    // only showing up once in an import response and then being lost.
+    public DbSet<WalletWithdrawal> WalletWithdrawals => Set<WalletWithdrawal>();
+
+    // NEW (ChamaLink v1 scope): structured, audited withdrawal/expenditure
+    // records - see Withdrawal.cs for how this differs from WalletWithdrawal.
+    public DbSet<Withdrawal> Withdrawals => Set<Withdrawal>();
+
+    // NEW (Withdrawal Governance gap): individual approve/reject votes
+    // toward a Withdrawal's decision - see WithdrawalApproval.cs.
+    public DbSet<WithdrawalApproval> WithdrawalApprovals => Set<WithdrawalApproval>();
+
+    // NEW (Reports Engine gap: Loan Portfolio Report / Member Financial
+    // Profile). Individual loan records - see Loan.cs for how this
+    // differs from the raw LoanDisbursement/LoanRepayment ledger rows.
+    public DbSet<Loan> Loans => Set<Loan>();
+
+    // NEW: Sprint 1 gaps - see Fine.cs, Debt.cs for how each differs from
+    // the raw LedgerEntry rows that already existed.
+    public DbSet<Fine> Fines => Set<Fine>();
+    public DbSet<Debt> Debts => Set<Debt>();
+
+    // NEW: Sprint 2 gap - see EventContribution.cs.
+    public DbSet<EventContribution> EventContributions => Set<EventContribution>();
+
+    // NEW: Sprint 1 gap #18 - whole-statement duplicate import protection.
+    public DbSet<ImportedStatement> ImportedStatements => Set<ImportedStatement>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        // Convert Enums to strings for PostgreSQL readability
+        modelBuilder.Entity<GroupMember>()
+            .Property(m => m.Role)
+            .HasConversion<string>();
+
+        modelBuilder.Entity<Account>()
+            .Property(a => a.Type)
+            .HasConversion<string>();
+
+        modelBuilder.Entity<LedgerEntry>()
+            .Property(l => l.Type)
+            .HasConversion<string>();
+
+        // ====================================================================
+        // PHASE A (GroupSettings Owned Types Refactor): each module below is
+        // an EF Core owned type mapped onto the SAME "GroupSettings" table
+        // (table splitting, the default for OwnsOne with no ToTable call).
+        // Every HasColumnName below that matches a name used in the old flat
+        // mapping is intentional - it keeps the actual database column the
+        // same one the old flat property used to own directly, so this is a
+        // schema-compatible reshuffle, not a data migration, for every field
+        // that already existed. Only the columns explicitly marked NEW below
+        // require an actual AddColumn in the next migration.
+        modelBuilder.Entity<GroupSettings>(entity =>
+        {
+            entity.OwnsOne(g => g.Financial, fs =>
+            {
+                fs.Property(f => f.JoiningFee)
+                    .HasColumnName("JoiningFee").HasPrecision(18, 2);
+                fs.Property(f => f.MinimumReserveBalance)
+                    .HasColumnName("MinimumReserveBalance").HasPrecision(18, 2);
+            });
+
+            entity.OwnsOne(g => g.Contribution, cs =>
+            {
+                cs.Property(c => c.MonthlyContribution)
+                    .HasColumnName("MonthlyContribution").HasPrecision(18, 2);
+                cs.Property(c => c.DueDateDay)
+                    .HasColumnName("DueDateDay");
+                cs.Property(c => c.GracePeriodDays)
+                    .HasColumnName("GracePeriodDays");
+                cs.Property(c => c.LateFine)
+                    .HasColumnName("LateFine").HasPrecision(18, 2);
+                cs.Property(c => c.MinimumShortfallForFine)
+                    .HasColumnName("MinimumShortfallForFine").HasPrecision(18, 2);
+                // NEW columns (Compliance Engine, Ukonga Rules Specification
+                // v1.2 Phase 1): was hardcoded "3" inside
+                // ContributionComplianceBackgroundService, now per-group config.
+                cs.Property(c => c.MaxConsecutiveMissedMonths)
+                    .HasColumnName("MaxConsecutiveMissedMonths");
+                // NEW column (ARCH-001, sehemu 4b): resolves which debt a new
+                // payment closes - see DebtAllocationStrategy in Enums.cs.
+                cs.Property(c => c.DebtAllocationStrategy)
+                    .HasColumnName("DebtAllocationStrategy").HasConversion<string>();
+            });
+
+            entity.OwnsOne(g => g.Event, es =>
+            {
+                es.Property(e => e.WelfareMode)
+                    .HasColumnName("WelfareMode").HasConversion<string>();
+                // NEW column: replaces the `fineAmount = 5000m` constant
+                // that used to be hardcoded in WelfarePenaltyBackgroundService.
+                es.Property(e => e.WelfareFineAmount)
+                    .HasColumnName("WelfareFineAmount").HasPrecision(18, 2);
+                // NEW column.
+                es.Property(e => e.EventsEnabled)
+                    .HasColumnName("EventsEnabled");
+            });
+
+            entity.OwnsOne(g => g.Loan, ls =>
+            {
+                ls.Property(l => l.InterestRate)
+                    .HasColumnName("LoanInterestRate").HasPrecision(5, 2);
+                // NEW columns.
+                ls.Property(l => l.Enabled)
+                    .HasColumnName("LoanEnabled");
+                ls.Property(l => l.InterestType)
+                    .HasColumnName("LoanInterestType").HasConversion<string>();
+                ls.Property(l => l.RepaymentDays)
+                    .HasColumnName("LoanRepaymentDays");
+                ls.Property(l => l.LatePenaltyAmount)
+                    .HasColumnName("LoanLatePenaltyAmount").HasPrecision(18, 2);
+                ls.Property(l => l.MaxLoanMultiplier)
+                    .HasColumnName("LoanMaxMultiplier").HasPrecision(5, 2);
+            });
+
+            entity.OwnsOne(g => g.Governance, gs =>
+            {
+                // Existing columns - unchanged names, matches old behaviour.
+                gs.OwnsOne(x => x.WithdrawalApproval, ap =>
+                {
+                    ap.Property(a => a.Mode)
+                        .HasColumnName("WithdrawalApprovalMode").HasConversion<string>();
+                    ap.Property(a => a.CustomRoles)
+                        .HasColumnName("CustomApprovalRoles");
+                    ap.Property(a => a.CustomRequiredApprovals)
+                        .HasColumnName("CustomRequiredApprovals");
+                });
+
+                // NEW: replaces the hardcoded "Treasurer or Chairperson"
+                // role checks in LoanService.IssueLoanAsync/MarkDefaultedAsync.
+                // Not yet read by LoanService - wiring it up is Phase B/C,
+                // once that service is deliberately touched.
+                gs.OwnsOne(x => x.LoanApproval, ap =>
+                {
+                    ap.Property(a => a.Mode)
+                        .HasColumnName("LoanApprovalMode").HasConversion<string>();
+                    ap.Property(a => a.CustomRoles)
+                        .HasColumnName("LoanApprovalCustomRoles");
+                    ap.Property(a => a.CustomRequiredApprovals)
+                        .HasColumnName("LoanApprovalCustomRequiredApprovals");
+                });
+
+                // NEW: replaces the hardcoded role check in EventController.
+                gs.OwnsOne(x => x.EventApproval, ap =>
+                {
+                    ap.Property(a => a.Mode)
+                        .HasColumnName("EventApprovalMode").HasConversion<string>();
+                    ap.Property(a => a.CustomRoles)
+                        .HasColumnName("EventApprovalCustomRoles");
+                    ap.Property(a => a.CustomRequiredApprovals)
+                        .HasColumnName("EventApprovalCustomRequiredApprovals");
+                });
+
+                // NEW: replaces the hardcoded role checks in MkobaImportController.
+                gs.OwnsOne(x => x.ImportApproval, ap =>
+                {
+                    ap.Property(a => a.Mode)
+                        .HasColumnName("ImportApprovalMode").HasConversion<string>();
+                    ap.Property(a => a.CustomRoles)
+                        .HasColumnName("ImportApprovalCustomRoles");
+                    ap.Property(a => a.CustomRequiredApprovals)
+                        .HasColumnName("ImportApprovalCustomRequiredApprovals");
+                });
+            });
+        });
+
+        modelBuilder.Entity<LedgerEntry>()
+            .Property(l => l.Amount).HasPrecision(18, 2);
+
+        // NEW: precision + duplicate-prevention for withdrawal records.
+        modelBuilder.Entity<WalletWithdrawal>()
+            .Property(w => w.Amount).HasPrecision(18, 2);
+
+        // Prevent importing the exact same withdrawal row twice.
+        modelBuilder.Entity<WalletWithdrawal>()
+            .HasIndex(w => new { w.GroupId, w.ReferenceNo })
+            .IsUnique();
+
+        // SECURITY/INTEGRITY FIX (audit 12.1 / 3.3: "Account unique
+        // constraint haipo" - AccountResolverService's "find or create"
+        // logic had a race window where two concurrent requests could
+        // both fail to find an existing account and both create one,
+        // leaving a member with two Savings accounts (or two Loan
+        // accounts, etc.) with balances split between them. This is now
+        // enforced at the database level, not just in application code -
+        // a second concurrent insert will fail with a DB constraint
+        // violation instead of silently succeeding.
+        modelBuilder.Entity<Account>()
+            .HasIndex(a => new { a.GroupMemberId, a.Type })
+            .IsUnique();
+
+        // NEW (ChamaLink v1 scope): structured withdrawal/expenditure records.
+        modelBuilder.Entity<Withdrawal>()
+            .Property(w => w.Amount).HasPrecision(18, 2);
+
+        // Who approved / who recorded are both GroupMembers, but a
+        // GroupMember can appear as either (or both) on many withdrawals -
+        // restrict cascade delete so removing a member doesn't wipe the
+        // group's expenditure history.
+        modelBuilder.Entity<Withdrawal>()
+            .HasOne(w => w.ApprovedByGroupMember)
+            .WithMany()
+            .HasForeignKey(w => w.ApprovedByGroupMemberId)
+            // ApprovedByGroupMemberId is nullable now (Sprint 2: a
+            // withdrawal starts life Pending, with no approver yet), so
+            // SetNull rather than Restrict.
+            .OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<Withdrawal>()
+            .HasOne(w => w.RecordedByGroupMember)
+            .WithMany()
+            .HasForeignKey(w => w.RecordedByGroupMemberId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Withdrawal>()
+            .HasOne(w => w.WalletWithdrawal)
+            .WithMany()
+            .HasForeignKey(w => w.WalletWithdrawalId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        // NEW (Reports Engine gap: Benefits Received linkage)
+        modelBuilder.Entity<Withdrawal>()
+            .HasOne(w => w.BeneficiaryGroupMember)
+            .WithMany()
+            .HasForeignKey(w => w.BeneficiaryGroupMemberId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<Withdrawal>()
+            .HasOne(w => w.GroupEvent)
+            .WithMany()
+            .HasForeignKey(w => w.GroupEventId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<Withdrawal>()
+            .Property(w => w.Status).HasConversion<string>();
+
+        // NOTE (Phase A): WithdrawalApprovalMode / WelfareMode string
+        // conversions used to be configured here directly. They are now
+        // [NotMapped] pass-through properties - the real, persisted
+        // conversions live on Governance.WithdrawalApproval.Mode and
+        // Event.WelfareMode in the GroupSettings owned-type setup above.
+
+        // NEW (Withdrawal Governance gap): one approval/rejection vote
+        // per member per withdrawal - a leader cannot vote twice.
+        modelBuilder.Entity<WithdrawalApproval>()
+            .Property(a => a.RoleAtDecision).HasConversion<string>();
+        modelBuilder.Entity<WithdrawalApproval>()
+            .HasIndex(a => new { a.WithdrawalId, a.GroupMemberId })
+            .IsUnique();
+        modelBuilder.Entity<WithdrawalApproval>()
+            .HasOne(a => a.Withdrawal)
+            .WithMany(w => w.Approvals)
+            .HasForeignKey(a => a.WithdrawalId)
+            .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<WithdrawalApproval>()
+            .HasOne(a => a.GroupMember)
+            .WithMany()
+            .HasForeignKey(a => a.GroupMemberId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // NEW (Reports Engine gap: Loan Portfolio / Member Financial Profile)
+        modelBuilder.Entity<Loan>().Property(l => l.PrincipalAmount).HasPrecision(18, 2);
+        modelBuilder.Entity<Loan>().Property(l => l.InterestRate).HasPrecision(5, 2);
+        modelBuilder.Entity<Loan>().Property(l => l.InterestAmount).HasPrecision(18, 2);
+        modelBuilder.Entity<Loan>().Property(l => l.AmountRepaid).HasPrecision(18, 2);
+        modelBuilder.Entity<Loan>().Property(l => l.Status).HasConversion<string>();
+        modelBuilder.Entity<Loan>().HasIndex(l => new { l.GroupId, l.Status });
+        modelBuilder.Entity<Loan>()
+            .HasOne(l => l.GroupMember)
+            .WithMany()
+            .HasForeignKey(l => l.GroupMemberId)
+            .OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<Loan>()
+            .HasOne(l => l.IssuedByGroupMember)
+            .WithMany()
+            .HasForeignKey(l => l.IssuedByGroupMemberId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // NEW (Sprint 2 gap: Event Beneficiary Tracking)
+        modelBuilder.Entity<GroupEvent>()
+            .Property(e => e.TargetAmountPerMember).HasPrecision(18, 2);
+        modelBuilder.Entity<GroupEvent>()
+            .HasOne(e => e.BeneficiaryGroupMember)
+            .WithMany()
+            .HasForeignKey(e => e.BeneficiaryGroupMemberId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        // NEW (Sprint 1 gap: Fine Entity)
+        modelBuilder.Entity<Fine>().Property(f => f.Amount).HasPrecision(18, 2);
+        modelBuilder.Entity<Fine>().Property(f => f.AmountPaid).HasPrecision(18, 2);
+        modelBuilder.Entity<Fine>().Property(f => f.Status).HasConversion<string>();
+        modelBuilder.Entity<Fine>().Property(f => f.ReasonType).HasConversion<string>();
+
+        // SECURITY/INTEGRITY FIX (audit 12.3 / 6.2: "Fine uniqueness
+        // haipo" - the old index below was not unique, so it only helped
+        // query performance; ContributionComplianceBackgroundService's
+        // "check AnyAsync, then create" pattern still had a race window
+        // where two overlapping runs (or two app instances) could both
+        // pass the check and both issue a Fine for the same member/period.
+        // Period is only ever set for monthly-late fines and GroupEventId
+        // is only ever set for welfare/event fines (see FineService), so
+        // one plain composite unique index would not work: Postgres
+        // treats NULLs as distinct, meaning a NULL Period would never
+        // collide with another NULL Period, and a NULL GroupEventId would
+        // never collide with another NULL GroupEventId. So this is split
+        // into two partial unique indexes, one per fine "family", each
+        // only active on the rows where its key column is actually set.
+        modelBuilder.Entity<Fine>()
+            .HasIndex(f => new { f.GroupMemberId, f.Period, f.ReasonType })
+            .IsUnique()
+            .HasFilter("\"Period\" IS NOT NULL");
+        modelBuilder.Entity<Fine>()
+            .HasIndex(f => new { f.GroupMemberId, f.GroupEventId, f.ReasonType })
+            .IsUnique()
+            .HasFilter("\"GroupEventId\" IS NOT NULL");
+
+        modelBuilder.Entity<Fine>()
+            .HasOne(f => f.GroupEvent)
+            .WithMany()
+            .HasForeignKey(f => f.GroupEventId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        // NEW (Sprint 1 gap: Debt Table)
+        modelBuilder.Entity<Debt>().Property(d => d.Amount).HasPrecision(18, 2);
+        modelBuilder.Entity<Debt>().Property(d => d.AmountCleared).HasPrecision(18, 2);
+        modelBuilder.Entity<Debt>().Property(d => d.Status).HasConversion<string>();
+
+        // SECURITY/INTEGRITY FIX (audit 12.2 / 6.2: "Debt uniqueness
+        // haipo" - same race window as Fine above: this index used to be
+        // non-unique, so it could not stop two overlapping background-job
+        // runs from both recording a shortfall Debt for the same member
+        // for the same month. Debt.Period is never null (every Debt is a
+        // specific month's missed contribution), so a single unique
+        // composite index is enough here - no partial-index split needed.
+        modelBuilder.Entity<Debt>()
+            .HasIndex(d => new { d.GroupMemberId, d.Period })
+            .IsUnique();
+
+        // NEW (Sprint 2 gap: Event Contribution Tracking)
+        modelBuilder.Entity<EventContribution>().Property(e => e.ExpectedAmount).HasPrecision(18, 2);
+        modelBuilder.Entity<EventContribution>().Property(e => e.PaidAmount).HasPrecision(18, 2);
+        modelBuilder.Entity<EventContribution>().Property(e => e.Status).HasConversion<string>();
+        modelBuilder.Entity<EventContribution>()
+            .HasIndex(e => new { e.GroupEventId, e.GroupMemberId }).IsUnique();
+
+        // NEW (Sprint 1 gap #18: whole-statement duplicate import protection)
+        modelBuilder.Entity<ImportedStatement>()
+            .HasIndex(s => new { s.GroupId, s.FileHash }).IsUnique();
+
+        // Primary Key for GroupSettings (1-to-1 relationship with Group)
+        modelBuilder.Entity<GroupSettings>()
+            .HasKey(g => g.GroupId);
+
+        // Prevent duplicate User registration in the same Group
+        modelBuilder.Entity<GroupMember>()
+            .HasIndex(m => new { m.GroupId, m.UserId })
+            .IsUnique();
+
+        // SECURITY/INTEGRITY FIX (audit 8.4: "Loan repayment ina
+        // concurrency risk" + implicit race in WithdrawalService.DecideAsync
+        // where two leaders approving/rejecting at the same instant both
+        // read the same Approvals snapshot): both Loan and Withdrawal now
+        // carry an optimistic concurrency token. On PostgreSQL the
+        // idiomatic token is the built-in "xmin" system column - every
+        // row already has one and it changes on every UPDATE, so no new
+        // column/migration DDL is needed, EF just needs to know to check
+        // it. If two requests load the same Loan/Withdrawal and both try
+        // to save, the second SaveChangesAsync now throws
+        // DbUpdateConcurrencyException instead of silently overwriting
+        // the first request's change (e.g. two simultaneous repayments
+        // both approving because both read the same stale
+        // OutstandingBalance) - see LoanController/WithdrawalController
+        // for how that exception is surfaced to the caller.
+        //
+        // UPDATED: Npgsql marked the old UseXminAsConcurrencyToken()
+        // helper obsolete (CS0618) in favour of configuring it through
+        // EF Core's own standard IsRowVersion() API. This is a like-for-
+        // like replacement, not a schema change - IsRowVersion() just
+        // expands to ValueGeneratedOnAddOrUpdate() + IsConcurrencyToken(),
+        // which is exactly what the old helper produced under the hood,
+        // still mapped onto the same "xmin" system column. No migration
+        // is needed: the resulting model is identical to before.
+        modelBuilder.Entity<Loan>()
+            .Property<uint>("xmin")
+            .HasColumnType("xid")
+            .IsRowVersion();
+
+        modelBuilder.Entity<Withdrawal>()
+            .Property<uint>("xmin")
+            .HasColumnType("xid")
+            .IsRowVersion();
+
+        // Optimize query performance for Ledger entries
+        modelBuilder.Entity<LedgerEntry>()
+            .HasIndex(l => new { l.GroupId, l.AccountId });
+    }
+}
