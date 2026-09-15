@@ -9,3 +9,4 @@
 /home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Domain/obj/Debug/net8.0/refint/ChamaLink.Domain.dll
 /home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Domain/obj/Debug/net8.0/ChamaLink.Domain.pdb
 /home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Domain/obj/Debug/net8.0/ref/ChamaLink.Domain.dll
+/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Domain/obj/Debug/net8.0/ChamaLink.Domain.sourcelink.json

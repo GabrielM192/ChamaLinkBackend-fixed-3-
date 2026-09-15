@@ -17,6 +17,8 @@ import {
   Copy,
   HandCoins,
   ArrowLeftRight,
+  History,
+  LineChart,
 } from 'lucide-react';
 import { useMyGroups } from '../hooks/useMyGroups';
 import {
@@ -33,6 +35,8 @@ import {
   getMemberRegistry,
   getGroupMembersSummary,
   getWhatsAppSummary,
+  getComplianceSummary,
+  getComplianceTrend,
   type GroupFinancialSummary,
   type CollectionRate,
   type Defaulter,
@@ -46,6 +50,8 @@ import {
   type MemberRegistryRow,
   type MemberStatusRow,
   type WhatsAppSummary,
+  type ComplianceSummaryRow,
+  type ComplianceTrend,
 } from '../api/reports';
 import { ProfileCard, StatRow } from '../components/ProfileCard';
 import { StatusBadge } from '../components/StatusBadge';
@@ -149,6 +155,7 @@ const TABS: Tab[] = [
   { id: 'wanachama', label: 'Wanachama', icon: Users },
   { id: 'mikopo', label: 'Mikopo', icon: Landmark },
   { id: 'deni-faini', label: 'Deni & Faini', icon: ShieldAlert },
+  { id: 'uzingatiaji', label: 'Uzingatiaji', icon: History },
   { id: 'matukio', label: 'Matukio & Malipo', icon: CalendarClock },
   { id: 'shiriki', label: 'Shiriki', icon: Share2 },
 ];
@@ -727,7 +734,157 @@ function DeniFainiTab({ groupId }: { groupId: string }) {
   );
 }
 
-// ── 5. Matukio & Malipo tab ──────────────────────────────────────────
+// ── 5. Uzingatiaji tab (Ukonga Rules Specification v1.2, sehemu 5/6/7/8
+//      - Phase 5. Reads ONLY from ComplianceSnapshots via ComplianceReportService
+//      - a pure history/trend view, separate from the real-time Defaulters
+//      list already shown on Muhtasari). ────────────────────────────────
+
+function UzingatiajiTab({ groupId }: { groupId: string }) {
+  const [summary, setSummary] = useState<ComplianceSummaryRow[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
+  const [trend, setTrend] = useState<ComplianceTrend | null>(null);
+  const [trendLoading, setTrendLoading] = useState(false);
+  const [trendError, setTrendError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!groupId) return;
+    let cancelled = false;
+    setSummary(null);
+    setError(null);
+    setSelectedMemberId(null);
+    setTrend(null);
+
+    getComplianceSummary(groupId)
+      .then((rows) => {
+        if (!cancelled) setSummary(rows);
+      })
+      .catch(() => {
+        if (!cancelled) setError('Imeshindwa kupakia muhtasari wa uzingatiaji.');
+      });
+
+    return () => { cancelled = true; };
+  }, [groupId]);
+
+  function handleSelectMember(row: ComplianceSummaryRow) {
+    setSelectedMemberId(row.groupMemberId);
+    setTrend(null);
+    setTrendError(null);
+    setTrendLoading(true);
+
+    getComplianceTrend(groupId, row.groupMemberId)
+      .then((t) => setTrend(t))
+      .catch(() => setTrendError('Imeshindwa kupakia mwenendo wa mwanachama huyu.'))
+      .finally(() => setTrendLoading(false));
+  }
+
+  if (error) return <ErrorState text={error} />;
+  if (!summary) return <LoadingState text="Inapakia uzingatiaji..." />;
+
+  return (
+    <div className="space-y-5">
+      <ProfileCard title="Muhtasari wa Uzingatiaji" icon={History} delay={0.05}>
+        <p className="text-xs text-ink-500 -mt-1 mb-3">
+          Toka kwenye snapshot ya mwisho ya kila mwanachama. Bofya jina kuona
+          mwenendo wake wa mwezi kwa mwezi.
+        </p>
+        {summary.length === 0 ? (
+          <EmptyState text="Hakuna taarifa za uzingatiaji bado — hakikisha ContributionComplianceBackgroundService imeshapita kwa kikundi hiki." />
+        ) : (
+          <div className="overflow-x-auto -mx-2">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-xs text-ink-600 uppercase tracking-wide">
+                  <th className="px-2 py-2 font-semibold">Mwanachama</th>
+                  <th className="px-2 py-2 font-semibold text-right">Ameshakosa (Jumla)</th>
+                  <th className="px-2 py-2 font-semibold text-right">Mfululizo</th>
+                  <th className="px-2 py-2 font-semibold text-right">Adhabu Inayodaiwa</th>
+                  <th className="px-2 py-2 font-semibold text-right">Deni la Mchango</th>
+                  <th className="px-2 py-2 font-semibold">Hali</th>
+                </tr>
+              </thead>
+              <tbody>
+                {summary.map((row) => {
+                  const si = memberStatusInfo(row.status);
+                  const isSelected = row.groupMemberId === selectedMemberId;
+                  return (
+                    <tr
+                      key={row.groupMemberId}
+                      onClick={() => handleSelectMember(row)}
+                      className={`border-t border-ink-100 cursor-pointer transition-colors ${
+                        isSelected ? 'bg-paper-raised' : 'hover:bg-paper'
+                      }`}
+                    >
+                      <td className="px-2 py-2 text-ink-950 font-medium">{row.memberName}</td>
+                      <td className="px-2 py-2 text-right">{row.totalMissedMonths}</td>
+                      <td className="px-2 py-2 text-right">{row.consecutiveMissedMonths}</td>
+                      <td className="px-2 py-2 text-right"><Figure value={row.outstandingFineAmount} /></td>
+                      <td className="px-2 py-2 text-right"><Figure value={row.outstandingContributionDebt} /></td>
+                      <td className="px-2 py-2">
+                        <StatusBadge label={si.label} tone={si.tone} />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </ProfileCard>
+
+      {selectedMemberId && (
+        <ProfileCard
+          title={trend ? `Mwenendo — ${trend.memberName}` : 'Mwenendo wa Mwanachama'}
+          icon={LineChart}
+          delay={0.1}
+        >
+          {trendLoading && <LoadingState text="Inapakia mwenendo..." />}
+          {trendError && <ErrorState text={trendError} />}
+          {trend && !trendLoading && (
+            trend.trend.length === 0 ? (
+              <EmptyState text="Hakuna snapshot za mwanachama huyu bado." />
+            ) : (
+              <div className="overflow-x-auto -mx-2">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-left text-xs text-ink-600 uppercase tracking-wide">
+                      <th className="px-2 py-2 font-semibold">Mwezi</th>
+                      <th className="px-2 py-2 font-semibold text-right">Kinachotegemewa</th>
+                      <th className="px-2 py-2 font-semibold text-right">Kilicholipwa</th>
+                      <th className="px-2 py-2 font-semibold text-right">Adhabu Inayodaiwa</th>
+                      <th className="px-2 py-2 font-semibold text-right">Deni la Mchango</th>
+                      <th className="px-2 py-2 font-semibold">Hali</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {trend.trend.map((point) => {
+                      const si = memberStatusInfo(point.status);
+                      return (
+                        <tr key={point.month} className="border-t border-ink-100">
+                          <td className="px-2 py-2 text-ink-700">{formatDate(point.month)}</td>
+                          <td className="px-2 py-2 text-right"><Figure value={point.expectedContribution} /></td>
+                          <td className="px-2 py-2 text-right"><Figure value={point.paidContribution} /></td>
+                          <td className="px-2 py-2 text-right"><Figure value={point.outstandingFineAmount} /></td>
+                          <td className="px-2 py-2 text-right"><Figure value={point.outstandingContributionDebt} /></td>
+                          <td className="px-2 py-2">
+                            <StatusBadge label={si.label} tone={si.tone} />
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )
+          )}
+        </ProfileCard>
+      )}
+    </div>
+  );
+}
+
+// ── 6. Matukio & Malipo tab ──────────────────────────────────────────
 
 interface MatukioData {
   events: EventReport[];
@@ -983,6 +1140,7 @@ export function ReportsPage() {
       {activeTab === 'wanachama' && <WanachamaTab groupId={activeGroupId} />}
       {activeTab === 'mikopo' && <MikopoTab groupId={activeGroupId} />}
       {activeTab === 'deni-faini' && <DeniFainiTab groupId={activeGroupId} />}
+      {activeTab === 'uzingatiaji' && <UzingatiajiTab groupId={activeGroupId} />}
       {activeTab === 'matukio' && <MatukioTab groupId={activeGroupId} />}
       {activeTab === 'shiriki' && <ShirikiTab groupId={activeGroupId} />}
     </div>

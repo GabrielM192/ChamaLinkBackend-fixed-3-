@@ -47,6 +47,10 @@ public class ApplicationDbContext : DbContext
     // NEW: Sprint 1 gap #18 - whole-statement duplicate import protection.
     public DbSet<ImportedStatement> ImportedStatements => Set<ImportedStatement>();
 
+    // NEW: Ukonga Rules Specification v1.2, sehemu 6 (Phase 4). Reporting
+    // snapshot only - see ComplianceSnapshot.cs.
+    public DbSet<ComplianceSnapshot> ComplianceSnapshots => Set<ComplianceSnapshot>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -370,6 +374,35 @@ public class ApplicationDbContext : DbContext
         // NEW (Sprint 1 gap #18: whole-statement duplicate import protection)
         modelBuilder.Entity<ImportedStatement>()
             .HasIndex(s => new { s.GroupId, s.FileHash }).IsUnique();
+
+        // NEW (Ukonga Rules Specification v1.2, sehemu 6 / Phase 4)
+        modelBuilder.Entity<ComplianceSnapshot>().Property(c => c.ExpectedContribution).HasPrecision(18, 2);
+        modelBuilder.Entity<ComplianceSnapshot>().Property(c => c.PaidContribution).HasPrecision(18, 2);
+        modelBuilder.Entity<ComplianceSnapshot>().Property(c => c.FineIssuedAmount).HasPrecision(18, 2);
+        modelBuilder.Entity<ComplianceSnapshot>().Property(c => c.FinePaidAmount).HasPrecision(18, 2);
+        modelBuilder.Entity<ComplianceSnapshot>().Property(c => c.OutstandingFineAmount).HasPrecision(18, 2);
+        modelBuilder.Entity<ComplianceSnapshot>().Property(c => c.OutstandingContributionDebt).HasPrecision(18, 2);
+        modelBuilder.Entity<ComplianceSnapshot>().Property(c => c.Status).HasConversion<string>();
+
+        // One snapshot per member per month (sehemu 6: "engine inaandika
+        // snapshot MOJA kwa kila mwanachama, kila mwezi") - the service
+        // upserts against this, it never appends duplicates for the same
+        // (member, month).
+        modelBuilder.Entity<ComplianceSnapshot>()
+            .HasIndex(c => new { c.GroupMemberId, c.Month })
+            .IsUnique();
+
+        modelBuilder.Entity<ComplianceSnapshot>()
+            .HasOne(c => c.GroupMember)
+            .WithMany()
+            .HasForeignKey(c => c.GroupMemberId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<ComplianceSnapshot>()
+            .HasOne(c => c.Group)
+            .WithMany()
+            .HasForeignKey(c => c.GroupId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         // Primary Key for GroupSettings (1-to-1 relationship with Group)
         modelBuilder.Entity<GroupSettings>()

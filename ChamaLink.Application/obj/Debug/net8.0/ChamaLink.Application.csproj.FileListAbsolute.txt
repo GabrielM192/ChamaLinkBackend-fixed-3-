@@ -13,3 +13,4 @@
 /home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Application/obj/Debug/net8.0/refint/ChamaLink.Application.dll
 /home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Application/obj/Debug/net8.0/ChamaLink.Application.pdb
 /home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Application/obj/Debug/net8.0/ref/ChamaLink.Application.dll
+/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Application/obj/Debug/net8.0/ChamaLink.Application.sourcelink.json

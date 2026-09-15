@@ -35,6 +35,7 @@ builder.Services.AddScoped<IEventService, EventService>();
 // Group Financial Summary), and the Withdrawal approval workflow.
 builder.Services.AddScoped<FineService>();
 builder.Services.AddScoped<DebtService>();
+builder.Services.AddScoped<ComplianceSnapshotService>();
 builder.Services.AddScoped<AnalyticsService>();
 builder.Services.AddScoped<WithdrawalService>();
 

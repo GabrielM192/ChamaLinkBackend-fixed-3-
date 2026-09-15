@@ -108,6 +108,22 @@ public class GroupService
         if (dto.MinimumShortfallForFine.HasValue) settings.Contribution.MinimumShortfallForFine = dto.MinimumShortfallForFine.Value;
         if (dto.WelfareMode.HasValue) settings.Event.WelfareMode = dto.WelfareMode.Value;
 
+        // NEW (Ukonga Rules Specification v1.2, sehemu 3/4b - ARCH-001).
+        if (dto.MaxConsecutiveMissedMonths.HasValue)
+            settings.Contribution.MaxConsecutiveMissedMonths = dto.MaxConsecutiveMissedMonths.Value;
+
+        if (!string.IsNullOrWhiteSpace(dto.DebtAllocationStrategy))
+        {
+            if (!Enum.TryParse<ChamaLink.Domain.DebtAllocationStrategy>(
+                    dto.DebtAllocationStrategy, ignoreCase: true, out var parsedStrategy))
+            {
+                throw new Exception(
+                    "DebtAllocationStrategy si sahihi. Chagua moja: CurrentMonthFirst, OldestDebtFirst, au ManualAllocation.");
+            }
+
+            settings.Contribution.DebtAllocationStrategy = parsedStrategy;
+        }
+
         await _context.SaveChangesAsync();
         return ToSettingsDto(settings);
     }
@@ -123,7 +139,8 @@ public class GroupService
         s.GroupId, s.Contribution.MonthlyContribution, s.Contribution.LateFine, s.Loan.InterestRate, s.Contribution.DueDateDay,
         s.Contribution.GracePeriodDays, s.Financial.JoiningFee, s.Financial.MinimumReserveBalance,
         s.Governance.WithdrawalApproval.Mode.ToString(), s.Governance.WithdrawalApproval.CustomRoles, s.Governance.WithdrawalApproval.CustomRequiredApprovals,
-        s.Contribution.MinimumShortfallForFine, s.Event.WelfareMode.ToString());
+        s.Contribution.MinimumShortfallForFine, s.Event.WelfareMode.ToString(),
+        s.Contribution.MaxConsecutiveMissedMonths, s.Contribution.DebtAllocationStrategy.ToString());
 
     public async Task<bool> AddMemberAsync(Guid groupId, AddMemberDto dto)
     {

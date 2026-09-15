@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ChamaLink.Application")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+43b80e3981ae02e3db39ed9f7bfe83d0dc450dab")]
 [assembly: System.Reflection.AssemblyProductAttribute("ChamaLink.Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ChamaLink.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

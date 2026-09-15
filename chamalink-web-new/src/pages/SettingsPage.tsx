@@ -10,6 +10,7 @@ import {
   Save,
   CheckCircle,
   Lock,
+  ShieldCheck,
 } from 'lucide-react';
 import { useMyGroups } from '../hooks/useMyGroups';
 import {
@@ -32,6 +33,26 @@ import { groupRoleLabel } from '../lib/status';
 const WELFARE_MODE_OPTIONS = [
   { value: 'DeductBalance', label: 'Punguza kwenye Salio la Mwanachama' },
   { value: 'ContributePot', label: 'Mchango wa Lazima kwenye Sanduku' },
+];
+
+// Ukonga Rules Specification v1.2, sehemu 4b (ARCH-001) - maelezo haya ni
+// tafsiri ya moja kwa moja ya jedwali la sehemu 4b, si maneno mapya.
+const DEBT_ALLOCATION_STRATEGY_OPTIONS = [
+  {
+    value: 'CurrentMonthFirst',
+    label: 'Mwezi wa Sasa Kwanza',
+    hint: 'Malipo mapya yanahesabiwa kama mchango wa mwezi wa sasa kwanza. Madeni ya zamani yanabaki bila kuguswa mpaka mtu alipe ziada mahususi.',
+  },
+  {
+    value: 'OldestDebtFirst',
+    label: 'Deni la Zamani Kwanza',
+    hint: 'Malipo mapya yanafunga deni la zamani zaidi kwanza, kisha ziada (kama ipo) inahesabiwa kama mchango wa mwezi wa sasa.',
+  },
+  {
+    value: 'ManualAllocation',
+    label: 'Ugawaji wa Mkono',
+    hint: 'Mtunza Hazina anachagua mwenyewe malipo yanafunga mwezi/deni gani wakati wa kurekodi.',
+  },
 ];
 
 const DUE_DAY_OPTIONS = Array.from({ length: 28 }, (_, i) => i + 1);
@@ -114,6 +135,10 @@ export function SettingsPage() {
     if (form.minimumShortfallForFine !== settings.minimumShortfallForFine)
       dto.minimumShortfallForFine = form.minimumShortfallForFine;
     if (form.welfareMode !== settings.welfareMode) dto.welfareMode = form.welfareMode;
+    if (form.maxConsecutiveMissedMonths !== settings.maxConsecutiveMissedMonths)
+      dto.maxConsecutiveMissedMonths = form.maxConsecutiveMissedMonths;
+    if (form.debtAllocationStrategy !== settings.debtAllocationStrategy)
+      dto.debtAllocationStrategy = form.debtAllocationStrategy;
 
     if (Object.keys(dto).length === 0) return;
 
@@ -397,6 +422,61 @@ export function SettingsPage() {
             />
             <p className={HINT_CLASS}>
               Salio la chini ambalo mwanachama hawezi kutoa kwenye akaunti yake.
+            </p>
+          </div>
+        </div>
+      </ProfileCard>
+
+      {/* Section: Uzingatiaji (Compliance - Ukonga Rules Specification
+          v1.2, sehemu 3/4b/ARCH-001) */}
+      <ProfileCard title="Uzingatiaji" icon={ShieldCheck} delay={0.22}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className={LABEL_CLASS} htmlFor="maxConsecutiveMissedMonths">
+              Miezi Mfululizo Kabla ya NonActive (1-24)
+            </label>
+            <input
+              id="maxConsecutiveMissedMonths"
+              type="number"
+              min={1}
+              max={24}
+              value={form.maxConsecutiveMissedMonths || ''}
+              disabled={!canEdit}
+              onChange={(e) =>
+                updateForm('maxConsecutiveMissedMonths', parseInt(e.target.value, 10) || 1)
+              }
+              className={moneyInputClass(canEdit)}
+              placeholder="mf. 3"
+            />
+            <p className={HINT_CLASS}>
+              Mwanachama akikosa michango kwa miezi mfululizo idadi hii, Status yake
+              inakuwa NonActive na inasubiri uamuzi wa uongozi (haifanyiki kiotomatiki).
+            </p>
+          </div>
+
+          <div>
+            <label className={LABEL_CLASS} htmlFor="debtAllocationStrategy">
+              Ugawaji wa Malipo Mapya (Deni la Zamani)
+            </label>
+            <select
+              id="debtAllocationStrategy"
+              value={form.debtAllocationStrategy}
+              disabled={!canEdit}
+              onChange={(e) => updateForm('debtAllocationStrategy', e.target.value)}
+              className={selectClass(canEdit)}
+            >
+              {DEBT_ALLOCATION_STRATEGY_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+            <p className={HINT_CLASS}>
+              {
+                DEBT_ALLOCATION_STRATEGY_OPTIONS.find(
+                  (opt) => opt.value === form.debtAllocationStrategy
+                )?.hint
+              }
             </p>
           </div>
         </div>

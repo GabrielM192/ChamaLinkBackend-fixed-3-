@@ -388,3 +388,66 @@ export async function getWhatsAppSummary(groupId: string): Promise<WhatsAppSumma
   const response = await apiClient.get<WhatsAppSummary>(`/Reports/whatsapp-summary/${groupId}`);
   return response.data;
 }
+
+// ---------------------------------------------------------------------
+// Ukonga Rules Specification v1.2, sehemu 5/6/7/8 (Phase 5). Reads ONLY
+// from ComplianceSnapshots (Phase 4), which the daily
+// ContributionComplianceBackgroundService writes - not a live recompute.
+// This is deliberately separate from Defaulter/MemberStatusRow above:
+// those are real-time ("what does the ledger say right now"), these are
+// the compliance ENGINE's own history (TotalMissedMonths vs
+// ConsecutiveMissedMonths, month-by-month trend) - complementary views,
+// not a replacement for each other.
+// ---------------------------------------------------------------------
+
+// Matches ChamaLink.Application.DTOs.ComplianceSummaryRowDto exactly.
+export interface ComplianceSummaryRow {
+  groupMemberId: string;
+  userId: string;
+  memberName: string;
+  phoneNumber: string;
+  snapshotMonth: string;
+  totalMissedMonths: number;
+  consecutiveMissedMonths: number;
+  outstandingFineAmount: number;
+  outstandingContributionDebt: number;
+  status: string;
+}
+
+// Matches ChamaLink.Application.DTOs.ComplianceTrendPointDto exactly.
+export interface ComplianceTrendPoint {
+  month: string;
+  expectedContribution: number;
+  paidContribution: number;
+  fineIssuedAmount: number;
+  finePaidAmount: number;
+  outstandingFineAmount: number;
+  totalMissedMonths: number;
+  consecutiveMissedMonths: number;
+  outstandingContributionDebt: number;
+  status: string;
+}
+
+// Matches ChamaLink.Application.DTOs.ComplianceTrendDto exactly.
+export interface ComplianceTrend {
+  groupMemberId: string;
+  memberName: string;
+  trend: ComplianceTrendPoint[];
+}
+
+export async function getComplianceSummary(groupId: string): Promise<ComplianceSummaryRow[]> {
+  const response = await apiClient.get<ComplianceSummaryRow[]>(
+    `/Reports/compliance-summary/${groupId}`
+  );
+  return response.data;
+}
+
+export async function getComplianceTrend(
+  groupId: string,
+  groupMemberId: string
+): Promise<ComplianceTrend> {
+  const response = await apiClient.get<ComplianceTrend>(
+    `/Reports/compliance-trend/${groupId}/${groupMemberId}`
+  );
+  return response.data;
+}

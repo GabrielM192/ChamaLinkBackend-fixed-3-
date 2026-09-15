@@ -33,6 +33,7 @@ namespace ChamaLink.API.Controllers
         private readonly WithdrawalService _withdrawalService;
         private readonly LoanService _loanService;
         private readonly GroupAuthorizationService _groupAuth;
+        private readonly ComplianceReportService _complianceReportService;
 
         public ReportsController(
             ApplicationDbContext context,
@@ -42,7 +43,8 @@ namespace ChamaLink.API.Controllers
             DebtService debtService,
             WithdrawalService withdrawalService,
             LoanService loanService,
-            GroupAuthorizationService groupAuth)
+            GroupAuthorizationService groupAuth,
+            ComplianceReportService complianceReportService)
         {
             _context = context;
             _accountResolver = accountResolver;
@@ -52,6 +54,7 @@ namespace ChamaLink.API.Controllers
             _withdrawalService = withdrawalService;
             _loanService = loanService;
             _groupAuth = groupAuth;
+            _complianceReportService = complianceReportService;
         }
 
         [HttpGet("whatsapp-summary/{groupId}")]
@@ -287,6 +290,55 @@ namespace ChamaLink.API.Controllers
             }
 
             return Ok(await _analyticsService.GetDefaultersAsync(groupId));
+        }
+
+        // Ukonga Rules Specification v1.2, sehemu 5/7/8 (Phase 5). One row
+        // per member from their latest ComplianceSnapshot (Phase 4):
+        // Missed(Total)/Consecutive/Fines Owed/Contribution Debt/Status -
+        // exactly the sehemu 7 table. This single endpoint is the source
+        // for "Defaulters" (filter ConsecutiveMissedMonths >= 1),
+        // "Warnings" (Status == "Warning") and "NonActive list" (Status ==
+        // "Inactive") from sehemu 8 - they are views over this data, not
+        // separate business logic, so the frontend filters what it needs
+        // rather than making three calls that would each recompute the
+        // same numbers.
+        [HttpGet("compliance-summary/{groupId}")]
+        public async Task<ActionResult<List<ComplianceSummaryRowDto>>> GetComplianceSummary(Guid groupId)
+        {
+            try
+            {
+                await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+            }
+
+            return Ok(await _complianceReportService.GetComplianceSummaryAsync(groupId));
+        }
+
+        // Ukonga Rules Specification v1.2, sehemu 6/8 (Phase 5): "Compliance
+        // Trends - mwenendo wa mwezi kwa mwezi" for one member, oldest
+        // month first, straight off their ComplianceSnapshot history.
+        [HttpGet("compliance-trend/{groupId}/{groupMemberId}")]
+        public async Task<ActionResult<ComplianceTrendDto>> GetComplianceTrend(Guid groupId, Guid groupMemberId)
+        {
+            try
+            {
+                await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+            }
+
+            var trend = await _complianceReportService.GetComplianceTrendAsync(groupId, groupMemberId);
+            if (trend == null)
+            {
+                return NotFound(new { message = "Mwanachama hakupatikana kwenye kikundi hiki." });
+            }
+
+            return Ok(trend);
         }
 
         // Sprint 1 gap #13: Group Balance Engine Haipo.

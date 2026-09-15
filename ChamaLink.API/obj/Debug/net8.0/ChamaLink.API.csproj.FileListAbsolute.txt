@@ -162,3 +162,4 @@
 /home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.API/obj/Debug/net8.0/ChamaLink.API.pdb
 /home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.API/obj/Debug/net8.0/ChamaLink.API.genruntimeconfig.cache
 /home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.API/obj/Debug/net8.0/ref/ChamaLink.API.dll
+/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.API/obj/Debug/net8.0/ChamaLink.API.sourcelink.json

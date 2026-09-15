@@ -116,7 +116,20 @@ public record UpdateGroupSettingsDto(
     [Range(0, double.MaxValue, ErrorMessage = "Kiwango cha msamaha wa faini hakiwezi kuwa hasi.")]
     decimal? MinimumShortfallForFine = null,
 
-    WelfareMode? WelfareMode = null
+    WelfareMode? WelfareMode = null,
+
+    // NEW (Ukonga Rules Specification v1.2, sehemu 3/4b - ARCH-001).
+    [Range(1, 24, ErrorMessage = "Idadi ya miezi mfululizo lazima iwe kati ya 1 na 24.")]
+    int? MaxConsecutiveMissedMonths = null,
+
+    // Validated/parsed as ChamaLink.Domain.DebtAllocationStrategy in
+    // GroupService.UpdateSettingsAsync (CurrentMonthFirst / OldestDebtFirst
+    // / ManualAllocation) - kept as a plain string here, like every other
+    // enum this DTO already sends back over the API, rather than binding
+    // straight to the enum type (this project has no global
+    // JsonStringEnumConverter, so an enum-typed request property would
+    // expect the numeric value, not the name).
+    string? DebtAllocationStrategy = null
 );
 
 public record GroupSettingsResponseDto(
@@ -132,7 +145,13 @@ public record GroupSettingsResponseDto(
     string? CustomApprovalRoles,
     int? CustomRequiredApprovals,
     decimal MinimumShortfallForFine,
-    string WelfareMode
+    string WelfareMode,
+    // NEW (Ukonga Rules Specification v1.2, sehemu 3/4b - ARCH-001):
+    // these existed in GroupSettings since Phase 1 but were never exposed
+    // via the API, so a Chairperson had no way to see or change them
+    // without going into the database directly.
+    int MaxConsecutiveMissedMonths,
+    string DebtAllocationStrategy
 );
 
 public record GroupResponseDto(

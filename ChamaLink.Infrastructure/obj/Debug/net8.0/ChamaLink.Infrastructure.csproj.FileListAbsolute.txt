@@ -17,3 +17,4 @@
 /home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Infrastructure/obj/Debug/net8.0/ChamaLink.Infrastructure.pdb
 /home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Infrastructure/obj/Debug/net8.0/ChamaLink.Infrastructure.genruntimeconfig.cache
 /home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Infrastructure/obj/Debug/net8.0/ref/ChamaLink.Infrastructure.dll
+/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Infrastructure/obj/Debug/net8.0/ChamaLink.Infrastructure.sourcelink.json

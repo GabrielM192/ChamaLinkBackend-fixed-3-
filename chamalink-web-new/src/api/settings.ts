@@ -19,6 +19,11 @@ export interface GroupSettings {
   customRequiredApprovals: number | null;
   minimumShortfallForFine: number;
   welfareMode: string;
+  // Ukonga Rules Specification v1.2, sehemu 3/4b (ARCH-001) - these
+  // existed on the backend since Phase 1 but were never returned by this
+  // endpoint until now.
+  maxConsecutiveMissedMonths: number;
+  debtAllocationStrategy: string;
 }
 
 // Matches ChamaLink.Application.DTOs.UpdateGroupSettingsDto. Every field is
@@ -36,6 +41,10 @@ export interface UpdateGroupSettingsDto {
   customRequiredApprovals?: number | null;
   minimumShortfallForFine?: number;
   welfareMode?: string;
+  maxConsecutiveMissedMonths?: number;
+  // 'CurrentMonthFirst' | 'OldestDebtFirst' | 'ManualAllocation' - see
+  // DEBT_ALLOCATION_STRATEGY_OPTIONS in SettingsPage.tsx.
+  debtAllocationStrategy?: string;
 }
 
 export async function getGroupSettings(groupId: string): Promise<GroupSettings> {
