@@ -14,6 +14,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+<<<<<<< HEAD
+=======
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.11" />
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 

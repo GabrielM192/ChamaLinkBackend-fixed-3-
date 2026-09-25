@@ -30,11 +30,28 @@ public class GroupController : ControllerBase
     [HttpPost("create")]
     public async Task<IActionResult> CreateGroup([FromBody] CreateGroupDto dto)
     {
+<<<<<<< HEAD
 
         var adminUserId = User.GetUserId();
         var result = await _groupService.CreateGroupAsync(adminUserId, dto);
         return Ok(result);
 
+=======
+        try
+        {
+            var adminUserId = User.GetUserId();
+            var result = await _groupService.CreateGroupAsync(adminUserId, dto);
+            return Ok(result);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     }
 
     // SECURITY FIX (audit 4.5 / policy table "Add member -> Chairperson/
@@ -44,12 +61,30 @@ public class GroupController : ControllerBase
     [HttpPost("{groupId}/add-member")]
     public async Task<IActionResult> AddMember(Guid groupId, [FromBody] AddMemberDto dto)
     {
+<<<<<<< HEAD
 
         await _groupAuth.RequireRoleAsync(User.GetUserId(), groupId, GroupRole.Chairperson);
 
         var result = await _groupService.AddMemberAsync(groupId, dto);
         return Ok(new { success = result, message = "Mwanachama ameongezwa kikamilifu." });
 
+=======
+        try
+        {
+            await _groupAuth.RequireRoleAsync(User.GetUserId(), groupId, GroupRole.Chairperson);
+
+            var result = await _groupService.AddMemberAsync(groupId, dto);
+            return Ok(new { success = result, message = "Mwanachama ameongezwa kikamilifu." });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     }
 
     // NEW (frontend foundation gap): the only way, until now, for a
@@ -69,12 +104,30 @@ public class GroupController : ControllerBase
     [HttpGet("{groupId}/settings")]
     public async Task<IActionResult> GetSettings(Guid groupId)
     {
+<<<<<<< HEAD
 
         await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
 
         var settings = await _groupService.GetSettingsAsync(groupId);
         return Ok(settings);
 
+=======
+        try
+        {
+            await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+
+            var settings = await _groupService.GetSettingsAsync(groupId);
+            return Ok(settings);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     }
 
     // SECURITY FIX (audit 1.3: "Group settings zinaweza kubadilishwa bila
@@ -85,11 +138,29 @@ public class GroupController : ControllerBase
     [HttpPut("{groupId}/settings")]
     public async Task<IActionResult> UpdateSettings(Guid groupId, [FromBody] UpdateGroupSettingsDto dto)
     {
+<<<<<<< HEAD
 
         await _groupAuth.RequireRoleAsync(User.GetUserId(), groupId, GroupRole.Chairperson);
 
         var settings = await _groupService.UpdateSettingsAsync(groupId, dto);
         return Ok(settings);
 
+=======
+        try
+        {
+            await _groupAuth.RequireRoleAsync(User.GetUserId(), groupId, GroupRole.Chairperson);
+
+            var settings = await _groupService.UpdateSettingsAsync(groupId, dto);
+            return Ok(settings);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     }
 }

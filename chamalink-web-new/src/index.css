@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+@theme {
+  /* ChamaLink design tokens - see design plan: ledger-indigo + earthen
+     gold, not the generic cream/terracotta/SaaS-card defaults. */
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+
+  --color-ink-950: #0f1b30;
+  --color-ink-900: #152a4e;
+  --color-ink-800: #1c3760;
+  --color-ink-700: #2a4a7d;
+  --color-ink-600: #3d5f97;
+  --color-ink-500: #5b7bb3;
+  --color-ink-100: #e4e9f3;
+  --color-ink-50: #f1f4f9;
+
+  --color-gold-700: #9c6a1f;
+  --color-gold-600: #c98a2e;
+  --color-gold-500: #dba24b;
+  --color-gold-100: #f6e7cc;
+
+  --color-paper: #f7f3ea;
+  --color-paper-raised: #fffdf8;
+
+  --color-standing-good: #2f6f4e;
+  --color-standing-good-bg: #e5f0e9;
+  --color-standing-warn: #b8792a;
+  --color-standing-warn-bg: #f6ead7;
+  --color-standing-overdue: #a13d2e;
+  --color-standing-overdue-bg: #f6e1dd;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-paper);
+  color: var(--color-ink-950);
+}
+
+/* Financial figures always use tabular, monospaced numerals - this is
+   the one deliberate "material" choice that separates ChamaLink's
+   ledger-like data density from a generic dashboard. */
+.figure {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}

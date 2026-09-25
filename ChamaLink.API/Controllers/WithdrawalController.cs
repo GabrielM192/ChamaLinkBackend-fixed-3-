@@ -34,10 +34,26 @@ public class WithdrawalController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateWithdrawalDto dto)
     {
+<<<<<<< HEAD
 
         var withdrawal = await _withdrawalService.CreateAsync(dto, User.GetUserId());
         return Ok(await ToDtoAsync(withdrawal));
 
+=======
+        try
+        {
+            var withdrawal = await _withdrawalService.CreateAsync(dto, User.GetUserId());
+            return Ok(await ToDtoAsync(withdrawal));
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     }
 
     // SECURITY FIX (audit Stage 1 #6): had no membership check at all
@@ -48,8 +64,19 @@ public class WithdrawalController : ControllerBase
     [HttpGet("group/{groupId}")]
     public async Task<IActionResult> GetByGroup(Guid groupId)
     {
+<<<<<<< HEAD
 
         await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+=======
+        try
+        {
+            await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+        }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
         var withdrawals = await _withdrawalService.GetByGroupAsync(groupId);
         var rule = await _withdrawalService.GetApprovalRuleAsync(groupId);
@@ -65,8 +92,19 @@ public class WithdrawalController : ControllerBase
     [HttpGet("group/{groupId}/approval-rule")]
     public async Task<IActionResult> GetApprovalRule(Guid groupId)
     {
+<<<<<<< HEAD
 
         await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+=======
+        try
+        {
+            await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+        }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
         var rule = await _withdrawalService.GetApprovalRuleAsync(groupId);
         return Ok(new WithdrawalApprovalRuleDto(
@@ -80,10 +118,22 @@ public class WithdrawalController : ControllerBase
     [HttpPost("{id}/decide")]
     public async Task<IActionResult> Decide(Guid id, [FromBody] DecideWithdrawalDto dto)
     {
+<<<<<<< HEAD
 
         var withdrawal = await _withdrawalService.DecideAsync(id, User.GetUserId(), dto.Approve, dto.Reason);
         return Ok(await ToDtoAsync(withdrawal));
 
+=======
+        try
+        {
+            var withdrawal = await _withdrawalService.DecideAsync(id, User.GetUserId(), dto.Approve, dto.Reason);
+            return Ok(await ToDtoAsync(withdrawal));
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+        }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
         // CONCURRENCY FIX: two leaders can approve/reject the same
         // withdrawal at almost the same instant, both reading the same
         // Status/Approvals snapshot before either one saves. Withdrawal
@@ -91,16 +141,47 @@ public class WithdrawalController : ControllerBase
         // SaveChangesAsync loses the race gets this instead of silently
         // computing the wrong PartiallyApproved/Approved transition from
         // stale data.
+<<<<<<< HEAD
 
+=======
+        catch (DbUpdateConcurrencyException)
+        {
+            return Conflict(new { message = "Uamuzi mwingine ulishatolewa kwenye withdrawal hii wakati huo huo. Tafadhali pakia upya kisha jaribu tena." });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     }
 
     [HttpPost("{id}/mark-paid")]
     public async Task<IActionResult> MarkPaid(Guid id)
     {
+<<<<<<< HEAD
 
         var withdrawal = await _withdrawalService.MarkPaidAsync(id, User.GetUserId());
         return Ok(await ToDtoAsync(withdrawal));
 
+=======
+        try
+        {
+            var withdrawal = await _withdrawalService.MarkPaidAsync(id, User.GetUserId());
+            return Ok(await ToDtoAsync(withdrawal));
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            return Conflict(new { message = "Withdrawal hii imebadilishwa na ombi lingine wakati huo huo. Tafadhali pakia upya kisha jaribu tena." });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     }
 
     private async Task<WithdrawalResponseDto> ToDtoAsync(Withdrawal w)

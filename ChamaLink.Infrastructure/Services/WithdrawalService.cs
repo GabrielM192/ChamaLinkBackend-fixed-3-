@@ -2,7 +2,10 @@ using ChamaLink.Application.DTOs;
 using ChamaLink.Domain;
 using ChamaLink.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+<<<<<<< HEAD
 using ChamaLink.Domain.Exceptions;
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
 namespace ChamaLink.Infrastructure.Services;
 
@@ -78,17 +81,28 @@ public class WithdrawalService
         var withdrawal = await _context.Withdrawals
             .Include(w => w.Approvals)
             .FirstOrDefaultAsync(w => w.Id == withdrawalId)
+<<<<<<< HEAD
             ?? throw new NotFoundException("Withdrawal haikupatikana.");
 
         if (withdrawal.Status != WithdrawalStatus.Pending && withdrawal.Status != WithdrawalStatus.PartiallyApproved)
             throw new ConflictException("Withdrawal hii tayari imeshughulikiwa (imeshaidhinishwa, kukataliwa, au kulipwa).");
+=======
+            ?? throw new Exception("Withdrawal haikupatikana.");
+
+        if (withdrawal.Status != WithdrawalStatus.Pending && withdrawal.Status != WithdrawalStatus.PartiallyApproved)
+            throw new Exception("Withdrawal hii tayari imeshughulikiwa (imeshaidhinishwa, kukataliwa, au kulipwa).");
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
         var decidingMember = await _context.GroupMembers
             .FirstOrDefaultAsync(m => m.UserId == actorUserId && m.GroupId == withdrawal.GroupId)
             ?? throw new UnauthorizedAccessException("Wewe si mwanachama wa kikundi hiki.");
 
         if (withdrawal.Approvals.Any(a => a.GroupMemberId == decidingMember.Id))
+<<<<<<< HEAD
             throw new ValidationException("Tayari umeshatoa uamuzi kwenye withdrawal hii.");
+=======
+            throw new Exception("Tayari umeshatoa uamuzi kwenye withdrawal hii.");
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
         var settings = await _context.GroupSettings
             .FirstOrDefaultAsync(s => s.GroupId == withdrawal.GroupId);
@@ -156,7 +170,11 @@ public class WithdrawalService
             throw new UnauthorizedAccessException("Mtunza Hazina (Treasurer) pekee ndiye anaweza kuthibitisha malipo.");
 
         if (withdrawal.Status != WithdrawalStatus.Approved)
+<<<<<<< HEAD
             throw new ValidationException("Withdrawal lazima iidhinishwe kikamilifu kwanza kabla ya kuwekwa kama imelipwa.");
+=======
+            throw new Exception("Withdrawal lazima iidhinishwe kikamilifu kwanza kabla ya kuwekwa kama imelipwa.");
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
         withdrawal.Status = WithdrawalStatus.Paid;
         await _context.SaveChangesAsync();
@@ -194,6 +212,10 @@ public class WithdrawalService
     private async Task<Withdrawal> GetOrThrowAsync(Guid id)
     {
         return await _context.Withdrawals.FindAsync(id)
+<<<<<<< HEAD
             ?? throw new NotFoundException("Withdrawal haikupatikana.");
+=======
+            ?? throw new Exception("Withdrawal haikupatikana.");
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     }
 }

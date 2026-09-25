@@ -2,7 +2,10 @@ using ChamaLink.Application.DTOs;
 using ChamaLink.Domain;
 using ChamaLink.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+<<<<<<< HEAD
 using ChamaLink.Domain.Exceptions;
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
 namespace ChamaLink.Infrastructure.Services;
 
@@ -43,13 +46,21 @@ public class LoanService
     {
         var member = await _context.GroupMembers
             .FirstOrDefaultAsync(m => m.Id == dto.GroupMemberId && m.GroupId == groupId)
+<<<<<<< HEAD
             ?? throw new NotFoundException("Anayekopeshwa si mwanachama wa kikundi hiki.");
+=======
+            ?? throw new Exception("Anayekopeshwa si mwanachama wa kikundi hiki.");
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
         var issuedBy = await _authorization.RequireGovernanceApprovalAsync(
             actorUserId, groupId, g => g.LoanApproval);
 
         if (dto.PrincipalAmount <= 0)
+<<<<<<< HEAD
             throw new ValidationException("Kiasi cha mkopo lazima kiwe zaidi ya sifuri.");
+=======
+            throw new Exception("Kiasi cha mkopo lazima kiwe zaidi ya sifuri.");
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
         var settings = await _context.GroupSettings.FirstOrDefaultAsync(s => s.GroupId == groupId);
 
@@ -62,7 +73,11 @@ public class LoanService
         DateTime dueDate = dto.DueDate ?? DateTime.UtcNow.AddDays(settings?.Loan.RepaymentDays ?? 30);
 
         if (dueDate <= DateTime.UtcNow)
+<<<<<<< HEAD
             throw new ValidationException("Tarehe ya kurejesha mkopo lazima iwe siku zijazo.");
+=======
+            throw new Exception("Tarehe ya kurejesha mkopo lazima iwe siku zijazo.");
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
         // LOAN ENGINE V2 (second audit round, item B): LoanSettings.Enabled
         // and MaxLoanMultiplier existed in the database since the Owned
@@ -71,6 +86,7 @@ public class LoanService
         // it would have zero effect. Wired in now, at the same point
         // InterestRate is already being read from these same settings.
         if (settings != null && !settings.Loan.Enabled)
+<<<<<<< HEAD
             throw new ValidationException("Mikopo haijaruhusiwa kwenye kikundi hiki kwa sasa.");
 
         decimal rate = dto.InterestRateOverride ?? settings?.Loan.InterestRate ?? 0m;
@@ -105,6 +121,11 @@ public class LoanService
                 "kitakapotekelezwa. Badilisha LoanInterestType iwe 'Flat' kwenye settings " +
                 "za kikundi ili kuendelea.");
 
+=======
+            throw new Exception("Mikopo haijaruhusiwa kwenye kikundi hiki kwa sasa.");
+
+        decimal rate = dto.InterestRateOverride ?? settings?.Loan.InterestRate ?? 0m;
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
         decimal interest = Math.Round(dto.PrincipalAmount * rate / 100m, 2);
 
         // MaxLoanMultiplier is nullable - null/not-set means "no limit".
@@ -137,7 +158,11 @@ public class LoanService
 
             if (totalExposureAfterThisLoan > maxAllowed)
             {
+<<<<<<< HEAD
                 throw new ValidationException(
+=======
+                throw new Exception(
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
                     $"Mkopo unazidi kiwango kinachoruhusiwa. Akiba yako ni Tsh {savingsBalance:N2}, " +
                     $"kiwango cha juu cha mkopo ni mara {multiplier} ya akiba " +
                     $"(Tsh {maxAllowed:N2}). Una deni lililopo la Tsh {existingOutstanding:N2}.");
@@ -209,11 +234,16 @@ public class LoanService
     public async Task<Loan> RecordRepaymentAsync(Guid loanId, RecordLoanRepaymentDto dto, Guid actorUserId)
     {
         var loan = await _context.Loans.FirstOrDefaultAsync(l => l.Id == loanId)
+<<<<<<< HEAD
             ?? throw new NotFoundException("Mkopo haukupatikana.");
+=======
+            ?? throw new Exception("Mkopo haukupatikana.");
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
         await _authorization.RequireGovernanceApprovalAsync(actorUserId, loan.GroupId, g => g.LoanApproval);
 
         if (loan.Status == LoanStatus.Repaid)
+<<<<<<< HEAD
             throw new ConflictException("Mkopo huu tayari umeshalipwa kikamilifu.");
 
         if (dto.Amount <= 0)
@@ -221,6 +251,15 @@ public class LoanService
 
         if (dto.Amount > loan.OutstandingBalance)
             throw new ValidationException($"Kiasi kimezidi deni lililobaki (Tsh {loan.OutstandingBalance:N2}).");
+=======
+            throw new Exception("Mkopo huu tayari umeshalipwa kikamilifu.");
+
+        if (dto.Amount <= 0)
+            throw new Exception("Kiasi cha malipo lazima kiwe zaidi ya sifuri.");
+
+        if (dto.Amount > loan.OutstandingBalance)
+            throw new Exception($"Kiasi kimezidi deni lililobaki (Tsh {loan.OutstandingBalance:N2}).");
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
         var paidAt = DateTime.UtcNow;
         loan.AmountRepaid += dto.Amount;
@@ -265,13 +304,21 @@ public class LoanService
     public async Task<Loan> MarkDefaultedAsync(Guid loanId, Guid actorUserId)
     {
         var loan = await _context.Loans.FirstOrDefaultAsync(l => l.Id == loanId)
+<<<<<<< HEAD
             ?? throw new NotFoundException("Mkopo haukupatikana.");
+=======
+            ?? throw new Exception("Mkopo haukupatikana.");
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
         await _authorization.RequireGovernanceApprovalAsync(
             actorUserId, loan.GroupId, g => g.LoanApproval);
 
         if (loan.Status == LoanStatus.Repaid)
+<<<<<<< HEAD
             throw new ConflictException("Mkopo huu tayari umeshalipwa - hauwezi kuwekwa kama umeshindikana.");
+=======
+            throw new Exception("Mkopo huu tayari umeshalipwa - hauwezi kuwekwa kama umeshindikana.");
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
         loan.Status = LoanStatus.Defaulted;
         await _context.SaveChangesAsync();
@@ -306,7 +353,11 @@ public class LoanService
     public async Task<List<Loan>> GetByMemberAsync(Guid groupMemberId, Guid actorUserId)
     {
         var targetMember = await _context.GroupMembers.FirstOrDefaultAsync(m => m.Id == groupMemberId)
+<<<<<<< HEAD
             ?? throw new NotFoundException("Mwanachama haukupatikana.");
+=======
+            ?? throw new Exception("Mwanachama haukupatikana.");
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
         await _authorization.RequireMembershipAsync(actorUserId, targetMember.GroupId);
 
@@ -331,6 +382,7 @@ public class LoanService
         var repaid = loans.Where(l => l.Status == LoanStatus.Repaid).ToList();
         var defaulted = loans.Where(l => l.Status == LoanStatus.Defaulted).ToList();
 
+<<<<<<< HEAD
             return new LoanPortfolioDto(
                 groupId, totalIssued, totalRecovered, totalOutstanding,
                 active.Count, overdue.Count, repaid.Count, defaulted.Count,
@@ -463,5 +515,12 @@ public class LoanService
         }
 
         return totalApplied;
+=======
+        return new LoanPortfolioDto(
+            groupId, totalIssued, totalRecovered, totalOutstanding,
+            active.Count, overdue.Count, repaid.Count, defaulted.Count,
+            overdue.Sum(l => l.OutstandingBalance),
+            defaulted.Sum(l => l.OutstandingBalance));
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     }
 }

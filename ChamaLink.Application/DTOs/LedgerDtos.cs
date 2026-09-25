@@ -4,6 +4,7 @@ namespace ChamaLink.Application.DTOs;
 
 public record RecordContributionDto(
     Guid GroupId,
+<<<<<<< HEAD
 
     // RENAMED (ukaguzi 2026-09-15, H-2): jina la zamani lilikuwa `MemberId`,
     // lakini LedgerService lilikuwa linapitisha thamani hii kama **userId**:
@@ -18,6 +19,9 @@ public record RecordContributionDto(
     // bado haitumii endpoint hii (nilitafuta - hakuna `Ledger` kwenye
     // src/), kwa hiyo kubadilisha jina hapa halivunji kitu.
     Guid UserId,
+=======
+    Guid MemberId,
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
     [Range(0.01, double.MaxValue, ErrorMessage = "Kiasi cha mchango lazima kiwe zaidi ya sifuri.")]
     decimal Amount,

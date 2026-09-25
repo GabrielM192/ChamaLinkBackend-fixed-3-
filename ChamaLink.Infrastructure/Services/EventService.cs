@@ -2,7 +2,10 @@ using ChamaLink.Application.DTOs;
 using ChamaLink.Application.Interfaces;
 using ChamaLink.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+<<<<<<< HEAD
 using ChamaLink.Domain.Exceptions;
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
 namespace ChamaLink.Infrastructure.Services;
 
@@ -27,7 +30,11 @@ public class EventService : IEventService
             .ToListAsync();
 
         if (!groupMembers.Any())
+<<<<<<< HEAD
             throw new ValidationException("Kikundi hakina wanachama.");
+=======
+            throw new Exception("Kikundi hakina wanachama.");
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
         // NEW (audit Stage 2 gap: "MinimumReserveBalance haitekelezwi"):
         // GroupSettings.MinimumReserveBalance has existed since the

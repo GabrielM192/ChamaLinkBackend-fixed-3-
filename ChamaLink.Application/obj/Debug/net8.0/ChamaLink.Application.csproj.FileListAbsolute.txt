@@ -1,0 +1,16 @@
+/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Application/bin/Debug/net8.0/ChamaLink.Application.deps.json
+/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Application/bin/Debug/net8.0/ChamaLink.Application.dll
+/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Application/bin/Debug/net8.0/ChamaLink.Application.pdb
+/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Application/bin/Debug/net8.0/ChamaLink.Domain.dll
+/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Application/bin/Debug/net8.0/ChamaLink.Domain.pdb
+/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Application/obj/Debug/net8.0/ChamaLink.Application.csproj.AssemblyReference.cache
+/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Application/obj/Debug/net8.0/ChamaLink.Application.GeneratedMSBuildEditorConfig.editorconfig
+/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Application/obj/Debug/net8.0/ChamaLink.Application.AssemblyInfoInputs.cache
+/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Application/obj/Debug/net8.0/ChamaLink.Application.AssemblyInfo.cs
+/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Application/obj/Debug/net8.0/ChamaLink.Application.csproj.CoreCompileInputs.cache
+/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Application/obj/Debug/net8.0/ChamaLin.525A58FD.Up2Date
+/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Application/obj/Debug/net8.0/ChamaLink.Application.dll
+/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Application/obj/Debug/net8.0/refint/ChamaLink.Application.dll
+/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Application/obj/Debug/net8.0/ChamaLink.Application.pdb
+/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Application/obj/Debug/net8.0/ref/ChamaLink.Application.dll
+/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Application/obj/Debug/net8.0/ChamaLink.Application.sourcelink.json

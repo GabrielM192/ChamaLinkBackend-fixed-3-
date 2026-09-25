@@ -2,7 +2,10 @@ using Microsoft.AspNetCore.Authorization;
 using ChamaLink.API.Extensions;
 using ChamaLink.Application.DTOs;
 using ChamaLink.Domain;
+<<<<<<< HEAD
 using ChamaLink.Infrastructure;
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 using ChamaLink.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,6 +23,7 @@ public class LedgerController : ControllerBase
 {
     private readonly LedgerService _ledgerService;
     private readonly GroupAuthorizationService _groupAuth;
+<<<<<<< HEAD
     private readonly MemberCounterSyncService _counterSync;
     private readonly ApplicationDbContext _context;
 
@@ -68,6 +72,13 @@ public class LedgerController : ControllerBase
             countDrift = result.CountDrift,
             balanceDrift = result.BalanceDrift
         });
+=======
+
+    public LedgerController(LedgerService ledgerService, GroupAuthorizationService groupAuth)
+    {
+        _ledgerService = ledgerService;
+        _groupAuth = groupAuth;
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     }
 
     // SECURITY FIX (audit 3.7: "Contribution endpoint haina actor
@@ -77,23 +88,59 @@ public class LedgerController : ControllerBase
     [HttpPost("contribution")]
     public async Task<IActionResult> RecordContribution([FromBody] RecordContributionDto dto)
     {
+<<<<<<< HEAD
 
         await _groupAuth.RequireRoleAsync(User.GetUserId(), dto.GroupId, GroupRole.Treasurer, GroupRole.Secretary, GroupRole.Chairperson);
 
         var result = await _ledgerService.RecordContributionAsync(dto);
         return Ok(result);
 
+=======
+        try
+        {
+            await _groupAuth.RequireRoleAsync(User.GetUserId(), dto.GroupId, GroupRole.Treasurer, GroupRole.Secretary, GroupRole.Chairperson);
+
+            var result = await _ledgerService.RecordContributionAsync(dto);
+            return Ok(result);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     }
 
     [HttpGet("summary/{groupId}")]
     public async Task<IActionResult> GetGroupSummary(Guid groupId)
     {
+<<<<<<< HEAD
 
         await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
 
         var result = await _ledgerService.GetGroupSummaryAsync(groupId);
         return Ok(result);
 
+=======
+        try
+        {
+            await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+
+            var result = await _ledgerService.GetGroupSummaryAsync(groupId);
+            return Ok(result);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     }
 
     // SECURITY FIX (audit Stage 1 #7): RequireMembershipAsync only proved
@@ -106,6 +153,7 @@ public class LedgerController : ControllerBase
     [HttpGet("statement/{groupId}/{userId}")]
     public async Task<IActionResult> GetMemberStatement(Guid groupId, Guid userId)
     {
+<<<<<<< HEAD
 
         var caller = await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
 
@@ -118,5 +166,28 @@ public class LedgerController : ControllerBase
         var result = await _ledgerService.GetMemberStatementAsync(groupId, userId);
         return Ok(result);
 
+=======
+        try
+        {
+            var caller = await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+
+            bool isOwnStatement = caller.UserId == userId;
+            bool isLeader = caller.Role is GroupRole.Treasurer or GroupRole.Chairperson or GroupRole.Secretary;
+
+            if (!isOwnStatement && !isLeader)
+                throw new UnauthorizedAccessException("Unaweza kuona statement yako mwenyewe pekee, isipokuwa kama wewe ni kiongozi wa kikundi.");
+
+            var result = await _ledgerService.GetMemberStatementAsync(groupId, userId);
+            return Ok(result);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     }
 }

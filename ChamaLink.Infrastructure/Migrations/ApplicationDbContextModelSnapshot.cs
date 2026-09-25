@@ -62,9 +62,12 @@ namespace ChamaLink.Infrastructure.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,2)");
 
+<<<<<<< HEAD
                     b.Property<decimal>("ExpectedLoanRepayment")
                         .HasColumnType("numeric");
 
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
                     b.Property<decimal>("FineIssuedAmount")
                         .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,2)");
@@ -94,9 +97,12 @@ namespace ChamaLink.Infrastructure.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,2)");
 
+<<<<<<< HEAD
                     b.Property<decimal>("PaidLoanRepayment")
                         .HasColumnType("numeric");
 
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("text");

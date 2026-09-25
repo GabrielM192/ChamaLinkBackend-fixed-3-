@@ -26,6 +26,7 @@ public class ComplianceSnapshot
     public decimal ExpectedContribution { get; set; }
     public decimal PaidContribution { get; set; }
 
+<<<<<<< HEAD
     // ── Marejesho ya mikopo (Awamu 1 — 2026-09-19) ────────────────────
     // "Lengo" la mwanachama kwa mwezi = ExpectedContribution +
     // ExpectedLoanRepayment. Bila hizi, ripoti za uzingatiaji zilionyesha
@@ -35,6 +36,8 @@ public class ComplianceSnapshot
     public decimal ExpectedLoanRepayment { get; set; }
     public decimal PaidLoanRepayment { get; set; }
 
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     // Amount-based, not bool (sehemu 6 - a member can pay part of a fine).
     public decimal FineIssuedAmount { get; set; }
     public decimal FinePaidAmount { get; set; }

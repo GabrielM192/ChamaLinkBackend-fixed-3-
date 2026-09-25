@@ -56,7 +56,10 @@ public class ContributionComplianceBackgroundService : BackgroundService
         var accountResolver = scope.ServiceProvider.GetRequiredService<AccountResolverService>();
         var fineService = scope.ServiceProvider.GetRequiredService<FineService>();
         var debtService = scope.ServiceProvider.GetRequiredService<DebtService>();
+<<<<<<< HEAD
         var snapshotService = scope.ServiceProvider.GetRequiredService<ComplianceSnapshotService>();
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
         var now = DateTime.UtcNow;
         var periodStart = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -108,8 +111,11 @@ public class ContributionComplianceBackgroundService : BackgroundService
 
                 decimal shortfall = settings.Contribution.MonthlyContribution - paidThisMonth;
 
+<<<<<<< HEAD
                 int consecutiveMissedMonths = 0;
 
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
                 if (shortfall <= 0)
                 {
                     // Ukonga Rules Specification v1.2, sehemu 4 (Phase 2 —
@@ -129,9 +135,15 @@ public class ContributionComplianceBackgroundService : BackgroundService
                     {
                         member.Status = MemberStatus.Active;
                     }
+<<<<<<< HEAD
                 }
                 else
                 {
+=======
+                    continue;
+                }
+
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
                 bool alreadyProcessed =
                     await context.Debts.AnyAsync(d => d.GroupMemberId == member.Id && d.Period == periodStart) ||
                     await context.Fines.AnyAsync(f => f.GroupMemberId == member.Id && f.Period == periodStart);
@@ -168,7 +180,11 @@ public class ContributionComplianceBackgroundService : BackgroundService
                 // zilizopita"). Hii pia ndiyo inayotumia
                 // MaxConsecutiveMissedMonths kutoka GroupSettings (Phase 1) -
                 // thamani ya kikundi, si tena 3 iliyokuwa hardcoded.
+<<<<<<< HEAD
                 consecutiveMissedMonths = await ComputeConsecutiveMissedMonthsAsync(
+=======
+                int consecutiveMissedMonths = await ComputeConsecutiveMissedMonthsAsync(
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
                     context, member.Id, periodStart);
 
                 if (consecutiveMissedMonths >= settings.Contribution.MaxConsecutiveMissedMonths)
@@ -188,6 +204,7 @@ public class ContributionComplianceBackgroundService : BackgroundService
                     // jedwali la Status thresholds).
                     member.Status = MemberStatus.Warning;
                 }
+<<<<<<< HEAD
                 }
 
                 // ── COMPLIANCE SNAPSHOT (wiring fix — 2026-09-19) ──────
@@ -219,6 +236,8 @@ public class ContributionComplianceBackgroundService : BackgroundService
                     Math.Min(paidThisMonth, settings.Contribution.MonthlyContribution),
                     consecutiveMissedMonths, member.Status,
                     expectedRepayment, paidRepayment);
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
             }
         }
 

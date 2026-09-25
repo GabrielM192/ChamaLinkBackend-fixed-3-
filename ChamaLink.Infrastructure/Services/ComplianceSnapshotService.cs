@@ -29,9 +29,13 @@ public class ComplianceSnapshotService
         decimal expectedContribution,
         decimal paidContribution,
         int consecutiveMissedMonths,
+<<<<<<< HEAD
         MemberStatus status,
         decimal expectedLoanRepayment = 0m,
         decimal paidLoanRepayment = 0m)
+=======
+        MemberStatus status)
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     {
         // TotalMissedMonths (sehemu 4: cumulative, historia yote,
         // "HAIWEZI kupungua tena") - every Debt row is exactly one missed
@@ -80,8 +84,11 @@ public class ComplianceSnapshotService
 
         snapshot.ExpectedContribution = expectedContribution;
         snapshot.PaidContribution = paidContribution;
+<<<<<<< HEAD
         snapshot.ExpectedLoanRepayment = expectedLoanRepayment;
         snapshot.PaidLoanRepayment = paidLoanRepayment;
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
         snapshot.FineIssuedAmount = fineIssuedAmount;
         snapshot.FinePaidAmount = finePaidAmount;
         // OutstandingFineAmount is derived (sehemu 6), always recomputed

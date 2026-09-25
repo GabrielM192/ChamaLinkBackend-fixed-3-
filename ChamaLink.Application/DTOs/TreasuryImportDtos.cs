@@ -56,6 +56,7 @@ public class TreasuryPlannedSplitDto
     public bool IsUnpaid => !TotalAmount.HasValue || TotalAmount.Value <= 0;
     public decimal Contribution { get; set; }
     public decimal Fine { get; set; }
+<<<<<<< HEAD
 
     // FIX (2026-09-18): ziada sasa inafuata sheria ya kikundi (Ukonga):
     // kwanza KIANZIO isiyolipwa, kisha madeni ya michango, kisha akiba.
@@ -67,6 +68,9 @@ public class TreasuryPlannedSplitDto
     public decimal JoiningFeeApplied { get; set; }  // sehemu ya ziada → KIANZIO
     public decimal DebtCleared { get; set; }        // sehemu ya ziada → madeni
     public decimal Savings { get; set; }            // kilichobaki → akiba
+=======
+    public decimal Savings { get; set; }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     public string SplitNote { get; set; } = string.Empty; // e.g. "fine (alichelewa)", "akiba"
 }
 
@@ -117,8 +121,11 @@ public class TreasuryImportResultDto
     public int JoiningFeesPosted { get; set; }
     public int FinesPosted { get; set; }          // bundled late fines un-bundled from cells
     public int SavingsPosted { get; set; }        // excess-to-akiba entries
+<<<<<<< HEAD
     public int DebtClearancesPosted { get; set; } // excess-to-debt entries (FIX 2026-09-18)
     public int RepaymentsPosted { get; set; }     // excess-to-loan-repayment (Awamu 1, 2026-09-19)
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     public int EntriesSkippedDuplicate { get; set; }
     public int MembersMarkedInactive { get; set; }
     public int UnmatchedRowsSkipped { get; set; }
@@ -126,8 +133,11 @@ public class TreasuryImportResultDto
     public decimal TotalJoiningFeesAmount { get; set; }
     public decimal TotalFinesAmount { get; set; }
     public decimal TotalSavingsAmount { get; set; }
+<<<<<<< HEAD
     public decimal TotalDebtClearedAmount { get; set; } // FIX 2026-09-18
     public decimal TotalRepaymentsAmount { get; set; }  // Awamu 1, 2026-09-19
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
     // Members + amounts whose MSIBA/SHEREHE welfare payouts were NOT
     // posted (deferred to v2 - needs GroupEvent model + katiba rules).

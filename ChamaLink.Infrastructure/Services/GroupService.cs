@@ -1,7 +1,10 @@
 using ChamaLink.Application.DTOs;
 using ChamaLink.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+<<<<<<< HEAD
 using ChamaLink.Domain.Exceptions;
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
 namespace ChamaLink.Infrastructure.Services;
 
@@ -90,7 +93,11 @@ public class GroupService
     public async Task<GroupSettingsResponseDto> UpdateSettingsAsync(Guid groupId, UpdateGroupSettingsDto dto)
     {
         var settings = await _context.GroupSettings.FirstOrDefaultAsync(s => s.GroupId == groupId)
+<<<<<<< HEAD
             ?? throw new NotFoundException("Mipangilio ya kikundi haikupatikana.");
+=======
+            ?? throw new Exception("Mipangilio ya kikundi haikupatikana.");
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
         if (dto.MonthlyContribution.HasValue) settings.Contribution.MonthlyContribution = dto.MonthlyContribution.Value;
         if (dto.LateFine.HasValue) settings.Contribution.LateFine = dto.LateFine.Value;
@@ -118,7 +125,11 @@ public class GroupService
             if (!Enum.TryParse<ChamaLink.Domain.DebtAllocationStrategy>(
                     dto.DebtAllocationStrategy, ignoreCase: true, out var parsedStrategy))
             {
+<<<<<<< HEAD
                 throw new ValidationException(
+=======
+                throw new Exception(
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
                     "DebtAllocationStrategy si sahihi. Chagua moja: CurrentMonthFirst, OldestDebtFirst, au ManualAllocation.");
             }
 
@@ -132,7 +143,11 @@ public class GroupService
     public async Task<GroupSettingsResponseDto> GetSettingsAsync(Guid groupId)
     {
         var settings = await _context.GroupSettings.FirstOrDefaultAsync(s => s.GroupId == groupId)
+<<<<<<< HEAD
             ?? throw new NotFoundException("Mipangilio ya kikundi haikupatikana.");
+=======
+            ?? throw new Exception("Mipangilio ya kikundi haikupatikana.");
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
         return ToSettingsDto(settings);
     }
 
@@ -158,7 +173,11 @@ public class GroupService
                 .AnyAsync(m => m.GroupId == groupId && m.Role == roleParsed);
 
             if (seatTaken)
+<<<<<<< HEAD
                 throw new ConflictException($"Nafasi ya {roleParsed} tayari ina mwanachama kwenye kikundi hiki.");
+=======
+                throw new Exception($"Nafasi ya {roleParsed} tayari ina mwanachama kwenye kikundi hiki.");
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
         }
 
         var member = new GroupMember

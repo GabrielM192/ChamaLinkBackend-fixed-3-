@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 <Project Sdk="Microsoft.NET.Sdk">
+=======
+﻿<Project Sdk="Microsoft.NET.Sdk">
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>

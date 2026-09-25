@@ -45,6 +45,7 @@ public class TreasuryImportController : ControllerBase
     // commit. No writes. The treasurer reviews exact matches, resolves
     // fuzzy matches (noted in warnings), then calls commit with
     // memberOverrides for any rows that need manual mapping.
+<<<<<<< HEAD
         // FIX (ukaguzi 2026-09-15, M-10): ukomo wa ukubwa wa faili - tazama
     // maelezo kwenye commit endpoint hapo chini.
     [RequestSizeLimit(10 * 1024 * 1024)]
@@ -53,6 +54,19 @@ public class TreasuryImportController : ControllerBase
     {
 
         await _groupAuth.RequireGovernanceApprovalAsync(User.GetUserId(), groupId, g => g.ImportApproval);
+=======
+    [HttpPost("preview/{groupId}")]
+    public async Task<ActionResult<TreasuryImportPreviewDto>> Preview(Guid groupId, IFormFile file)
+    {
+        try
+        {
+            await _groupAuth.RequireGovernanceApprovalAsync(User.GetUserId(), groupId, g => g.ImportApproval);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+        }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
         if (file == null || file.Length == 0)
             return BadRequest("Tafadhali chagua faili la Excel.");
@@ -64,10 +78,27 @@ public class TreasuryImportController : ControllerBase
             bytes = ms.ToArray();
         }
 
+<<<<<<< HEAD
         using var stream = new MemoryStream(bytes);
         var preview = await _importService.GetPreviewAsync(groupId, stream);
         return Ok(preview);
 
+=======
+        try
+        {
+            using var stream = new MemoryStream(bytes);
+            var preview = await _importService.GetPreviewAsync(groupId, stream);
+            return Ok(preview);
+        }
+        catch (InvalidDataException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     }
 
     // STEP 2 (commit): actually posts the ledger entries.
@@ -78,6 +109,7 @@ public class TreasuryImportController : ControllerBase
     //                         to a member Id, for rows that preview flagged
     //                         as fuzzy/unmatched. Example:
     //                         {"BOAZ KILEWO":"<guid>","ISHEKELI KASASILA":"<guid>"}
+<<<<<<< HEAD
         // FIX (ukaguzi 2026-09-15, M-10): hakuna ukomo wa ukubwa wa faili.
     // Controller inakopi faili nzima kwenye MemoryStream kabla ya kusoma -
     // bila ukomo, mtu anayepakia faili la GB 1 anaweza kuisha RAM ya server
@@ -85,14 +117,28 @@ public class TreasuryImportController : ControllerBase
     // statement ya chama; badilisha kama unahitaji zaidi.
     [RequestSizeLimit(10 * 1024 * 1024)]
 [HttpPost("commit/{groupId}")]
+=======
+    [HttpPost("commit/{groupId}")]
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     public async Task<ActionResult<TreasuryImportResultDto>> Commit(
         Guid groupId,
         IFormFile file,
         [FromForm] int year,
         [FromForm] string? memberOverridesJson)
     {
+<<<<<<< HEAD
 
         await _groupAuth.RequireGovernanceApprovalAsync(User.GetUserId(), groupId, g => g.ImportApproval);
+=======
+        try
+        {
+            await _groupAuth.RequireGovernanceApprovalAsync(User.GetUserId(), groupId, g => g.ImportApproval);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+        }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
         if (file == null || file.Length == 0)
             return BadRequest("Tafadhali chagua faili la Excel.");
@@ -109,9 +155,26 @@ public class TreasuryImportController : ControllerBase
             bytes = ms.ToArray();
         }
 
+<<<<<<< HEAD
         using var stream = new MemoryStream(bytes);
         var result = await _importService.CommitAsync(groupId, stream, year, overrides);
         return Ok(result);
 
+=======
+        try
+        {
+            using var stream = new MemoryStream(bytes);
+            var result = await _importService.CommitAsync(groupId, stream, year, overrides);
+            return Ok(result);
+        }
+        catch (InvalidDataException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     }
 }

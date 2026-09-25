@@ -40,6 +40,7 @@ public class DebtService
     // needs) against the member's oldest open Debts first, so past
     // shortfalls get cleared automatically as soon as the member catches
     // up, without a treasurer having to do it by hand.
+<<<<<<< HEAD
     //
     // FIX (2026-09-16): DebtAllocationStrategy ILIKUWA HAISOMWI KAMWE.
     //
@@ -84,6 +85,10 @@ public class DebtService
                     "(Kukataa hapa ni bora kuliko kugawa pesa kwa mpangilio usio sahihi kimya kimya.)");
         }
 
+=======
+    public async Task<decimal> ClearWithPaymentAsync(Guid groupMemberId, decimal availableAmount)
+    {
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
         if (availableAmount <= 0)
             return 0m;
 

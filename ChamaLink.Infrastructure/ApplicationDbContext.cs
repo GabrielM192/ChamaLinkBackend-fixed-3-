@@ -51,6 +51,7 @@ public class ApplicationDbContext : DbContext
     // snapshot only - see ComplianceSnapshot.cs.
     public DbSet<ComplianceSnapshot> ComplianceSnapshots => Set<ComplianceSnapshot>();
 
+<<<<<<< HEAD
     // V2 — Financial OS foundation
     public DbSet<GroupPolicy> GroupPolicies => Set<GroupPolicy>();
     public DbSet<FinancialEvent> FinancialEvents => Set<FinancialEvent>();
@@ -61,15 +62,20 @@ public class ApplicationDbContext : DbContext
     public DbSet<WelfareDisbursement> WelfareDisbursements => Set<WelfareDisbursement>();
     public DbSet<MemberStatusHistory> MemberStatusHistories => Set<MemberStatusHistory>();
 
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
         // Convert Enums to strings for PostgreSQL readability
+<<<<<<< HEAD
         modelBuilder.Entity<Group>()
             .Property(g => g.OrganizationType)
             .HasConversion<string>();
 
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
         modelBuilder.Entity<GroupMember>()
             .Property(m => m.Role)
             .HasConversion<string>();
@@ -100,6 +106,7 @@ public class ApplicationDbContext : DbContext
                     .HasColumnName("JoiningFee").HasPrecision(18, 2);
                 fs.Property(f => f.MinimumReserveBalance)
                     .HasColumnName("MinimumReserveBalance").HasPrecision(18, 2);
+<<<<<<< HEAD
                 // Fixed31: JoinFee config
                 fs.OwnsOne(f => f.JoinFeeConfig, jfc =>
                 {
@@ -108,6 +115,8 @@ public class ApplicationDbContext : DbContext
                     jfc.Property(j => j.CaptureMode).HasColumnName("JoinFeeCaptureMode").HasConversion<string>();
                     jfc.Property(j => j.ApprovalThreshold).HasColumnName("JoinFeeApprovalThreshold").HasPrecision(18, 2);
                 });
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
             });
 
             entity.OwnsOne(g => g.Contribution, cs =>
@@ -131,11 +140,14 @@ public class ApplicationDbContext : DbContext
                 // payment closes - see DebtAllocationStrategy in Enums.cs.
                 cs.Property(c => c.DebtAllocationStrategy)
                     .HasColumnName("DebtAllocationStrategy").HasConversion<string>();
+<<<<<<< HEAD
                 // NEW (Product Config Layer): how shortfall is handled
                 cs.Property(c => c.ShortfallStrategy)
                     .HasColumnName("ShortfallStrategy").HasConversion<string>();
                 cs.Property(c => c.ComplianceStrategy)
                     .HasColumnName("ComplianceStrategy").HasConversion<string>();
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
             });
 
             entity.OwnsOne(g => g.Event, es =>
@@ -166,6 +178,7 @@ public class ApplicationDbContext : DbContext
                     .HasColumnName("LoanLatePenaltyAmount").HasPrecision(18, 2);
                 ls.Property(l => l.MaxLoanMultiplier)
                     .HasColumnName("LoanMaxMultiplier").HasPrecision(5, 2);
+<<<<<<< HEAD
                 // NEW (Product Config Layer)
                 ls.Property(l => l.LoanStrategy)
                     .HasColumnName("LoanStrategy").HasConversion<string>();
@@ -173,6 +186,8 @@ public class ApplicationDbContext : DbContext
                     .HasColumnName("GuarantorRequired");
                 ls.Property(l => l.MinGuarantors)
                     .HasColumnName("MinGuarantors");
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
             });
 
             entity.OwnsOne(g => g.Governance, gs =>
@@ -484,6 +499,7 @@ public class ApplicationDbContext : DbContext
         // Optimize query performance for Ledger entries
         modelBuilder.Entity<LedgerEntry>()
             .HasIndex(l => new { l.GroupId, l.AccountId });
+<<<<<<< HEAD
 
         // V2 — Financial OS foundation
         modelBuilder.Entity<GroupPolicy>().Property(p => p.MonthlyContribution).HasPrecision(18, 2);
@@ -544,5 +560,7 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<MemberStatusHistory>().Property(h => h.FromStatus).HasConversion<string>();
         modelBuilder.Entity<MemberStatusHistory>().Property(h => h.ToStatus).HasConversion<string>();
         modelBuilder.Entity<MemberStatusHistory>().HasIndex(h => h.MemberId);
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     }
 }

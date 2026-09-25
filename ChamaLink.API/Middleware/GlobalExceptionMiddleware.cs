@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 using ChamaLink.Domain.Exceptions;
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 using System.Diagnostics;
 using System.Net;
 using System.Text.Json;
@@ -7,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ChamaLink.API.Middleware;
 
 // SECURITY FIX (audit 2.3/2.4: "catch (Exception) inatumika kila mahali" /
+<<<<<<< HEAD
 // "Hakuna global exception middleware").
 //
 // UPDATED (ukaguzi 2026-09-15): controllers HAZINA tena `catch (Exception)`.
@@ -22,6 +26,19 @@ namespace ChamaLink.API.Middleware;
 // makosa ya biashara (AppException + watoto wake) yanapata status sahihi na
 // ujumbe ulioandikwa kwa ajili ya mtumiaji; kitu kingine chochote
 // kinaangukia 500 bila maelezo ya ndani.
+=======
+// "Hakuna global exception middleware"). This is NOT meant to replace the
+// try/catch blocks already inside controllers - those still run first and
+// still decide their own response for the cases they know about (e.g.
+// UnauthorizedAccessException -> 401). This middleware is the SAFETY NET
+// underneath all of that: anything that escapes uncaught (a report
+// endpoint with no try/catch at all, a database error, a null reference,
+// an out-of-memory during a big M-Koba import, etc.) used to reach the
+// client as either a raw ASP.NET 500 page (which can leak stack traces
+// and internal type/file names in Development) or, worse, get silently
+// turned into a misleading "400 Bad Request" by a stray catch(Exception)
+// somewhere upstream.
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 //
 // Every response from here is a standard ProblemDetails-shaped JSON body
 // plus an X-Correlation-Id header. The correlation ID is what ties a
@@ -88,6 +105,7 @@ public class GlobalExceptionMiddleware
             title,
             status = statusCode,
             detail = publicMessage,
+<<<<<<< HEAD
             // COMPATIBILITY (ukaguzi 2026-09-15): controllers zilikuwa
             // zinarudisha `{ message = ex.Message }`, na frontend inasoma
             // `err.response.data.message` kwenye faili 7 (MkobaPage.tsx,
@@ -96,6 +114,8 @@ public class GlobalExceptionMiddleware
             // frontend isivunjike. `detail` ndiyo ya kawaida; `message` ni
             // kwa ajili ya urithi wa code iliyopo.
             message = publicMessage,
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
             correlationId,
             // Stack traces and raw exception messages are only ever
             // included outside the "detail" field, and only in
@@ -117,6 +137,7 @@ public class GlobalExceptionMiddleware
     // used to leak to clients via the old catch(Exception) pattern.
     private static (int StatusCode, string Title, string Message) MapException(Exception ex) => ex switch
     {
+<<<<<<< HEAD
         // FIX (ukaguzi 2026-09-15, H-4): hii ilikuwa 401. Kisemantiki
         // 401 = "sijui wewe ni nani", 403 = "nakujua, lakini huna ruhusa".
         // GroupAuthorizationService hutoa UnauthorizedAccessException kwa
@@ -131,6 +152,10 @@ public class GlobalExceptionMiddleware
         // ya nenosiri, ilhali ni wanachama tu wanapiga endpoints).
         UnauthorizedAccessException => (
             (int)HttpStatusCode.Forbidden,
+=======
+        UnauthorizedAccessException => (
+            (int)HttpStatusCode.Unauthorized,
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
             "Huna ruhusa",
             ex.Message),
 
@@ -139,6 +164,7 @@ public class GlobalExceptionMiddleware
             "Haikupatikana",
             ex.Message),
 
+<<<<<<< HEAD
         // NEW (ukaguzi 2026-09-15, M-7): makosa ya biashara sasa yana aina
         // maalum (ChamaLink.Domain.Exceptions) badala ya `throw new Exception`.
         // Hii ndiyo ramani yao. Kila mmoja unabeba ujumbe ulioandikwa kwa
@@ -172,6 +198,14 @@ public class GlobalExceptionMiddleware
         // kama makosa ya mtumiaji). Sasa kosa la aina hiyo linaangukia 500
         // mahali pake sahihi.
         ArgumentException => (
+=======
+        // ArgumentException/InvalidOperationException are how services in
+        // this codebase already raise business-rule errors with a
+        // Swahili, user-safe message (e.g. "Huna fedha za kutosha
+        // kikundi.") - that message is intentionally written to be shown
+        // to the caller, so it is safe to forward as-is here too.
+        ArgumentException or InvalidOperationException => (
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
             (int)HttpStatusCode.BadRequest,
             "Ombi halina ukamilifu",
             ex.Message),

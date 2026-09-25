@@ -24,18 +24,42 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDto dto)
     {
+<<<<<<< HEAD
 
         var result = await _authService.RegisterAsync(dto);
         return Ok(result);
 
+=======
+        try
+        {
+            var result = await _authService.RegisterAsync(dto);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     }
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto dto)
     {
+<<<<<<< HEAD
 
         var result = await _authService.LoginAsync(dto);
         return Ok(result);
 
+=======
+        try
+        {
+            var result = await _authService.LoginAsync(dto);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     }
 }

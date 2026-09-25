@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "zQdJcdvpF9Y=",
+  "success": true,
+  "projectFilePath": "/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Application/ChamaLink.Application.csproj",
+  "expectedPackageFiles": [
+    "/home/mkoma/.nuget/packages/exceldatareader/3.9.0/exceldatareader.3.9.0.nupkg.sha512",
+    "/home/mkoma/.nuget/packages/pdfpig/0.1.16/pdfpig.0.1.16.nupkg.sha512"
+  ],
+  "logs": []
+}

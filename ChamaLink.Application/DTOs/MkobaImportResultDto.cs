@@ -9,10 +9,13 @@ public class MKobaImportResultDto
     public decimal TotalFinesDeducted { get; set; }
     public decimal TotalWelfareAdded { get; set; }
 
+<<<<<<< HEAD
     // Awamu 1 (2026-09-19): jumla ya pesa zilizokata marejesho ya mikopo
     // kupitia STEP 3.3 ya waterfall.
     public decimal TotalRepaymentsApplied { get; set; }
 
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     // NEW: counts "Withdraw / Transfer fund" rows found in the statement.
     // These are skipped from the deposit waterfall - see Warnings for details.
     public int WithdrawalsSkipped { get; set; }

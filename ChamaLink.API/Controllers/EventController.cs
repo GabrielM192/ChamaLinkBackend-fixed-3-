@@ -36,11 +36,29 @@ public class EventController : ControllerBase
     [HttpPost("trigger")]
     public async Task<IActionResult> TriggerEvent([FromBody] TriggerEventDto dto)
     {
+<<<<<<< HEAD
 
         await _groupAuth.RequireRoleAsync(User.GetUserId(), dto.GroupId, GroupRole.Treasurer, GroupRole.Chairperson);
 
         var result = await _eventService.TriggerEventAsync(dto);
         return Ok(result);
 
+=======
+        try
+        {
+            await _groupAuth.RequireRoleAsync(User.GetUserId(), dto.GroupId, GroupRole.Treasurer, GroupRole.Chairperson);
+
+            var result = await _eventService.TriggerEventAsync(dto);
+            return Ok(result);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     }
 }

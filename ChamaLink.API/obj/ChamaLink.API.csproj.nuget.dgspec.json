@@ -1,0 +1,316 @@
+{
+  "format": 1,
+  "restore": {
+    "/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.API/ChamaLink.API.csproj": {}
+  },
+  "projects": {
+    "/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.API/ChamaLink.API.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.API/ChamaLink.API.csproj",
+        "projectName": "ChamaLink.API",
+        "projectPath": "/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.API/ChamaLink.API.csproj",
+        "packagesPath": "/home/mkoma/.nuget/packages/",
+        "outputPath": "/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.API/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/mkoma/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Application/ChamaLink.Application.csproj": {
+                "projectPath": "/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Application/ChamaLink.Application.csproj"
+              },
+              "/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Infrastructure/ChamaLink.Infrastructure.csproj": {
+                "projectPath": "/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Infrastructure/ChamaLink.Infrastructure.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[8.0.11, )"
+            },
+            "Microsoft.AspNetCore.OpenApi": {
+              "target": "Package",
+              "version": "[8.0.30, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.11, )"
+            },
+            "Microsoft.Extensions.Hosting": {
+              "target": "Package",
+              "version": "[10.0.11, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[6.6.2, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.424/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Application/ChamaLink.Application.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Application/ChamaLink.Application.csproj",
+        "projectName": "ChamaLink.Application",
+        "projectPath": "/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Application/ChamaLink.Application.csproj",
+        "packagesPath": "/home/mkoma/.nuget/packages/",
+        "outputPath": "/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Application/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/mkoma/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Domain/ChamaLink.Domain.csproj": {
+                "projectPath": "/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Domain/ChamaLink.Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "ExcelDataReader": {
+              "target": "Package",
+              "version": "[3.9.0, )"
+            },
+            "PdfPig": {
+              "target": "Package",
+              "version": "[0.1.16, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.424/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Domain/ChamaLink.Domain.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Domain/ChamaLink.Domain.csproj",
+        "projectName": "ChamaLink.Domain",
+        "projectPath": "/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Domain/ChamaLink.Domain.csproj",
+        "packagesPath": "/home/mkoma/.nuget/packages/",
+        "outputPath": "/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Domain/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/mkoma/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.424/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Infrastructure/ChamaLink.Infrastructure.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Infrastructure/ChamaLink.Infrastructure.csproj",
+        "projectName": "ChamaLink.Infrastructure",
+        "projectPath": "/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Infrastructure/ChamaLink.Infrastructure.csproj",
+        "packagesPath": "/home/mkoma/.nuget/packages/",
+        "outputPath": "/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Infrastructure/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/mkoma/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Application/ChamaLink.Application.csproj": {
+                "projectPath": "/home/mkoma/Downloads/ChamaLinkBackend-fixed(3)/ChamaLink.Application/ChamaLink.Application.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "BCrypt.Net-Next": {
+              "target": "Package",
+              "version": "[4.2.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.11, )"
+            },
+            "Microsoft.Extensions.Hosting": {
+              "target": "Package",
+              "version": "[10.0.11, )"
+            },
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
+              "target": "Package",
+              "version": "[8.0.11, )"
+            },
+            "System.IdentityModel.Tokens.Jwt": {
+              "target": "Package",
+              "version": "[8.0.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.424/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

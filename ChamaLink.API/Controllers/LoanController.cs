@@ -23,19 +23,47 @@ public class LoanController : ControllerBase
     [HttpPost("group/{groupId}")]
     public async Task<IActionResult> Issue(Guid groupId, [FromBody] IssueLoanDto dto)
     {
+<<<<<<< HEAD
 
         var loan = await _loanService.IssueLoanAsync(groupId, dto, User.GetUserId());
         return Ok(ToDto(loan));
 
+=======
+        try
+        {
+            var loan = await _loanService.IssueLoanAsync(groupId, dto, User.GetUserId());
+            return Ok(ToDto(loan));
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     }
 
     [HttpPost("{id}/repay")]
     public async Task<IActionResult> Repay(Guid id, [FromBody] RecordLoanRepaymentDto dto)
     {
+<<<<<<< HEAD
 
         var loan = await _loanService.RecordRepaymentAsync(id, dto, User.GetUserId());
         return Ok(ToDto(loan));
 
+=======
+        try
+        {
+            var loan = await _loanService.RecordRepaymentAsync(id, dto, User.GetUserId());
+            return Ok(ToDto(loan));
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+        }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
         // CONCURRENCY FIX (audit 8.4: "Loan repayment ina concurrency
         // risk"): thrown by RecordRepaymentAsync's SaveChangesAsync when
         // another repayment (or mark-defaulted, etc.) already changed
@@ -45,34 +73,97 @@ public class LoanController : ControllerBase
         // than either silently overwriting the other request's change
         // (the old behaviour, which could overpay a loan) or surfacing a
         // confusing raw EF error message as a 400.
+<<<<<<< HEAD
 
+=======
+        catch (DbUpdateConcurrencyException)
+        {
+            return Conflict(new { message = "Mkopo huu umebadilishwa na ombi lingine wakati huo huo. Tafadhali pakia upya taarifa za mkopo kisha jaribu tena." });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     }
 
     [HttpPost("{id}/mark-defaulted")]
     public async Task<IActionResult> MarkDefaulted(Guid id)
     {
+<<<<<<< HEAD
 
         var loan = await _loanService.MarkDefaultedAsync(id, User.GetUserId());
         return Ok(ToDto(loan));
 
+=======
+        try
+        {
+            var loan = await _loanService.MarkDefaultedAsync(id, User.GetUserId());
+            return Ok(ToDto(loan));
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            return Conflict(new { message = "Mkopo huu umebadilishwa na ombi lingine wakati huo huo (huenda malipo yameingizwa). Tafadhali pakia upya taarifa za mkopo kisha jaribu tena." });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     }
 
     [HttpGet("group/{groupId}")]
     public async Task<IActionResult> GetByGroup(Guid groupId)
     {
+<<<<<<< HEAD
 
         var loans = await _loanService.GetByGroupAsync(groupId, User.GetUserId());
         return Ok(loans.Select(ToDto));
 
+=======
+        try
+        {
+            var loans = await _loanService.GetByGroupAsync(groupId, User.GetUserId());
+            return Ok(loans.Select(ToDto));
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     }
 
     [HttpGet("member/{groupMemberId}")]
     public async Task<IActionResult> GetByMember(Guid groupMemberId)
     {
+<<<<<<< HEAD
 
         var loans = await _loanService.GetByMemberAsync(groupMemberId, User.GetUserId());
         return Ok(loans.Select(ToDto));
 
+=======
+        try
+        {
+            var loans = await _loanService.GetByMemberAsync(groupMemberId, User.GetUserId());
+            return Ok(loans.Select(ToDto));
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     }
 
     private static LoanResponseDto ToDto(Loan l) => new(

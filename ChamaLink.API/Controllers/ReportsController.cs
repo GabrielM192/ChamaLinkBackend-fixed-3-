@@ -34,8 +34,11 @@ namespace ChamaLink.API.Controllers
         private readonly LoanService _loanService;
         private readonly GroupAuthorizationService _groupAuth;
         private readonly ComplianceReportService _complianceReportService;
+<<<<<<< HEAD
         private readonly ReconciliationService _reconciliationService;
         private readonly MemberStatementService _memberStatementService;
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
         public ReportsController(
             ApplicationDbContext context,
@@ -46,9 +49,13 @@ namespace ChamaLink.API.Controllers
             WithdrawalService withdrawalService,
             LoanService loanService,
             GroupAuthorizationService groupAuth,
+<<<<<<< HEAD
             ComplianceReportService complianceReportService,
             ReconciliationService reconciliationService,
             MemberStatementService memberStatementService)
+=======
+            ComplianceReportService complianceReportService)
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
         {
             _context = context;
             _accountResolver = accountResolver;
@@ -59,15 +66,29 @@ namespace ChamaLink.API.Controllers
             _loanService = loanService;
             _groupAuth = groupAuth;
             _complianceReportService = complianceReportService;
+<<<<<<< HEAD
             _reconciliationService = reconciliationService;
             _memberStatementService = memberStatementService;
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
         }
 
         [HttpGet("whatsapp-summary/{groupId}")]
         public async Task<ActionResult<WhatsAppReportDto>> GetWhatsAppSummary(Guid groupId)
         {
+<<<<<<< HEAD
 
             await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+=======
+            try
+            {
+                await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+            }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
             var group = await _context.Groups
                 .Include(g => g.Settings)
@@ -156,8 +177,19 @@ namespace ChamaLink.API.Controllers
         [HttpGet("group-members-summary/{groupId}")]
         public async Task<ActionResult<List<MemberStatusDto>>> GetGroupMembersSummary(Guid groupId)
         {
+<<<<<<< HEAD
 
             await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+=======
+            try
+            {
+                await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+            }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
             var group = await _context.Groups
                 .Include(g => g.Settings)
@@ -236,28 +268,71 @@ namespace ChamaLink.API.Controllers
         [HttpGet("group-financial-summary/{groupId}")]
         public async Task<ActionResult<GroupFinancialSummaryDto>> GetGroupFinancialSummary(Guid groupId)
         {
+<<<<<<< HEAD
 
             await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
             return Ok(await _analyticsService.GetGroupFinancialSummaryAsync(groupId));
 
+=======
+            try
+            {
+                await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+                return Ok(await _analyticsService.GetGroupFinancialSummaryAsync(groupId));
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
         }
 
         // Sprint 1 gap #11: Collection Rate Engine Haipo.
         [HttpGet("collection-rate/{groupId}")]
         public async Task<ActionResult<CollectionRateDto>> GetCollectionRate(Guid groupId)
         {
+<<<<<<< HEAD
 
             await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
             return Ok(await _analyticsService.GetCollectionRateAsync(groupId));
 
+=======
+            try
+            {
+                await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+                return Ok(await _analyticsService.GetCollectionRateAsync(groupId));
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
         }
 
         // Sprint 1 gap #12: Defaulter Engine Haipo.
         [HttpGet("defaulters/{groupId}")]
         public async Task<ActionResult<List<DefaulterDto>>> GetDefaulters(Guid groupId)
         {
+<<<<<<< HEAD
 
             await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+=======
+            try
+            {
+                await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+            }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
             return Ok(await _analyticsService.GetDefaultersAsync(groupId));
         }
@@ -275,12 +350,24 @@ namespace ChamaLink.API.Controllers
         [HttpGet("compliance-summary/{groupId}")]
         public async Task<ActionResult<List<ComplianceSummaryRowDto>>> GetComplianceSummary(Guid groupId)
         {
+<<<<<<< HEAD
 
             await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+=======
+            try
+            {
+                await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+            }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
             return Ok(await _complianceReportService.GetComplianceSummaryAsync(groupId));
         }
 
+<<<<<<< HEAD
         // ── Ripoti ya "Mwezi kwa Mwezi" (2026-09-18, Ukonga) ──────────
         // Jedwali linalolingana na Excel ya viongozi wa Ukonga: kila
         // mwanachama × kila mwezi, seli = kilicholipwa, "*" = hajalipa,
@@ -360,14 +447,27 @@ namespace ChamaLink.API.Controllers
             return Ok(result);
         }
 
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
         // Ukonga Rules Specification v1.2, sehemu 6/8 (Phase 5): "Compliance
         // Trends - mwenendo wa mwezi kwa mwezi" for one member, oldest
         // month first, straight off their ComplianceSnapshot history.
         [HttpGet("compliance-trend/{groupId}/{groupMemberId}")]
         public async Task<ActionResult<ComplianceTrendDto>> GetComplianceTrend(Guid groupId, Guid groupMemberId)
         {
+<<<<<<< HEAD
 
             await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+=======
+            try
+            {
+                await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+            }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
             var trend = await _complianceReportService.GetComplianceTrendAsync(groupId, groupMemberId);
             if (trend == null)
@@ -382,8 +482,19 @@ namespace ChamaLink.API.Controllers
         [HttpGet("group-balance/{groupId}")]
         public async Task<ActionResult<GroupBalanceDto>> GetGroupBalance(Guid groupId)
         {
+<<<<<<< HEAD
 
             await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+=======
+            try
+            {
+                await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+            }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
             return Ok(await _analyticsService.GetGroupBalanceAsync(groupId));
         }
@@ -393,8 +504,19 @@ namespace ChamaLink.API.Controllers
         [HttpGet("members/{groupId}")]
         public async Task<ActionResult<List<MemberReportRowDto>>> GetMembersReport(Guid groupId)
         {
+<<<<<<< HEAD
 
             await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+=======
+            try
+            {
+                await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+            }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
             return Ok(await _analyticsService.GetMembersReportAsync(groupId));
         }
@@ -405,8 +527,19 @@ namespace ChamaLink.API.Controllers
         [HttpGet("loan-portfolio/{groupId}")]
         public async Task<ActionResult<LoanPortfolioDto>> GetLoanPortfolio(Guid groupId)
         {
+<<<<<<< HEAD
 
             await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+=======
+            try
+            {
+                await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+            }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
             return Ok(await _loanService.GetPortfolioAsync(groupId, User.GetUserId()));
         }
@@ -415,8 +548,19 @@ namespace ChamaLink.API.Controllers
         [HttpGet("fines/{groupId}")]
         public async Task<IActionResult> GetFineReport(Guid groupId)
         {
+<<<<<<< HEAD
 
             await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+=======
+            try
+            {
+                await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+            }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
             return Ok(await _fineService.GetFinesForGroupAsync(groupId));
         }
@@ -425,8 +569,19 @@ namespace ChamaLink.API.Controllers
         [HttpGet("debts/{groupId}")]
         public async Task<IActionResult> GetDebtReport(Guid groupId)
         {
+<<<<<<< HEAD
 
             await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+=======
+            try
+            {
+                await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+            }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
             return Ok(await _debtService.GetDebtsForGroupAsync(groupId));
         }
@@ -437,8 +592,19 @@ namespace ChamaLink.API.Controllers
         [HttpGet("withdrawals/{groupId}")]
         public async Task<IActionResult> GetWithdrawalReport(Guid groupId)
         {
+<<<<<<< HEAD
 
             await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+=======
+            try
+            {
+                await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+            }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
             var withdrawals = await _withdrawalService.GetByGroupAsync(groupId);
             var rule = await _withdrawalService.GetApprovalRuleAsync(groupId);
@@ -460,14 +626,26 @@ namespace ChamaLink.API.Controllers
         [HttpGet("events/{groupId}")]
         public async Task<IActionResult> GetEventReport(Guid groupId)
         {
+<<<<<<< HEAD
 
             await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+=======
+            try
+            {
+                await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+            }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
             var events = await _context.GroupEvents
                 .Where(e => e.GroupId == groupId)
                 .OrderByDescending(e => e.EventDate)
                 .ToListAsync();
 
+<<<<<<< HEAD
             // PERF FIX (ukaguzi 2026-09-15, H-5: N+1 query).
             // Zamani `foreach` hii ilikuwa inapiga `EventContributions`
             // query moja kwa KILA tukio - matukio 50 = queries 51
@@ -485,6 +663,14 @@ namespace ChamaLink.API.Controllers
             foreach (var evt in events)
             {
                 var contributions = contributionsByEvent[evt.Id];
+=======
+            var result = new List<object>();
+            foreach (var evt in events)
+            {
+                var contributions = await _context.EventContributions
+                    .Where(ec => ec.GroupEventId == evt.Id)
+                    .ToListAsync();
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
                 result.Add(new
                 {
@@ -513,8 +699,19 @@ namespace ChamaLink.API.Controllers
         [HttpGet("member-registry/{groupId}")]
         public async Task<IActionResult> GetMemberRegistry(Guid groupId)
         {
+<<<<<<< HEAD
 
             await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+=======
+            try
+            {
+                await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+            }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
             var members = await _context.GroupMembers
                 .Include(m => m.User)
@@ -546,10 +743,26 @@ namespace ChamaLink.API.Controllers
         [HttpGet("member-profile/{groupId}/{userId}")]
         public async Task<ActionResult<MemberFinancialProfileDto>> GetMemberFinancialProfile(Guid groupId, Guid userId)
         {
+<<<<<<< HEAD
 
             await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
             return Ok(await _analyticsService.GetMemberFinancialProfileAsync(groupId, userId));
 
+=======
+            try
+            {
+                await _groupAuth.RequireMembershipAsync(User.GetUserId(), groupId);
+                return Ok(await _analyticsService.GetMemberFinancialProfileAsync(groupId, userId));
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
         }
     }
 }

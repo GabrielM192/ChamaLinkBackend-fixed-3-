@@ -11,8 +11,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChamaLink.Infrastructure", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChamaLink.API", "ChamaLink.API\ChamaLink.API.csproj", "{C8AEC3B4-CA39-4935-BCF7-653D01D49529}"
 EndProject
+<<<<<<< HEAD
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChamaLink.Tests", "ChamaLink.Tests\ChamaLink.Tests.csproj", "{2C20E0D7-B1B6-4AED-8C8D-B36DB3F2A934}"
 EndProject
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,9 +41,12 @@ Global
 		{C8AEC3B4-CA39-4935-BCF7-653D01D49529}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8AEC3B4-CA39-4935-BCF7-653D01D49529}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8AEC3B4-CA39-4935-BCF7-653D01D49529}.Release|Any CPU.Build.0 = Release|Any CPU
+<<<<<<< HEAD
 		{2C20E0D7-B1B6-4AED-8C8D-B36DB3F2A934}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2C20E0D7-B1B6-4AED-8C8D-B36DB3F2A934}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C20E0D7-B1B6-4AED-8C8D-B36DB3F2A934}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C20E0D7-B1B6-4AED-8C8D-B36DB3F2A934}.Release|Any CPU.Build.0 = Release|Any CPU
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 	EndGlobalSection
 EndGlobal

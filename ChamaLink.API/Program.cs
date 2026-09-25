@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 using System.Text;
 using System.Threading.RateLimiting;
 using ChamaLink.Application.Interfaces;
@@ -72,6 +73,55 @@ builder.Services.AddScoped<WithdrawalService>();
 // IEventService had before. Without this, every LoanController endpoint
 // would throw an InvalidOperationException at request time even though
 // the whole feature builds cleanly.
+=======
+using System.Text;
+using System.Threading.RateLimiting;
+using ChamaLink.Application.Interfaces;
+using ChamaLink.Infrastructure.Services;
+using Microsoft.Extensions.Hosting;
+using ChamaLink.Infrastructure;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<GroupService>();
+builder.Services.AddScoped<IMKobaParserService, MkobaParserService>();
+builder.Services.AddScoped<LedgerService>();
+
+// FIX: AccountResolverService is the one shared place that decides what
+// AccountId to use for a LedgerEntry. Every service/controller that writes
+// to the ledger needs this registered so it can be injected.
+builder.Services.AddScoped<AccountResolverService>();
+
+// FIX: IEventService existed but was never registered before, so
+// EventController (also new) could not be created and the Event/Tukio
+// feature was completely unreachable.
+builder.Services.AddScoped<IEventService, EventService>();
+
+// NEW (Sprint 1 + Sprint 2 gaps): Fine/Debt entities, the financial
+// intelligence layer (Collection Rate / Defaulters / Group Balance /
+// Group Financial Summary), and the Withdrawal approval workflow.
+builder.Services.AddScoped<FineService>();
+builder.Services.AddScoped<DebtService>();
+builder.Services.AddScoped<ComplianceSnapshotService>();
+builder.Services.AddScoped<AnalyticsService>();
+builder.Services.AddScoped<WithdrawalService>();
+
+// BUG FIX: LoanService/LoanController already existed (Loan entity, DTOs,
+// EF model config were all in place), but LoanService was never
+// registered here - the exact same gap AccountResolverService and
+// IEventService had before. Without this, every LoanController endpoint
+// would throw an InvalidOperationException at request time even though
+// the whole feature builds cleanly.
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 builder.Services.AddScoped<LoanService>();
 
 // SECURITY FIX (audit Stage 2: centralized authorization policy). See
@@ -79,6 +129,7 @@ builder.Services.AddScoped<LoanService>();
 // "is this caller a member/leader of this group" now goes through here.
 builder.Services.AddScoped<GroupAuthorizationService>();
 
+<<<<<<< HEAD
 // BUG FIX (ukaguzi 2026-09-15): hizi tatu zilikuwa hazijasajiliwa kabisa,
 // ingawa classes zake zilikuwepo na build ilipita bila error - DI
 // inashindwa runtime tu, si compile time. Matokeo yake:
@@ -120,6 +171,8 @@ builder.Services.AddScoped<LedgerReclassificationService>();
 // Fixed31 — Historical JoinFee with approval workflow (AWAMU C+D)
 builder.Services.AddScoped<HistoricalJoinFeeService>();
 
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 // SECURITY FIX (audit Stage 2: "CORS haipo"): with no CORS policy at
 // all, a browser blocks the React/TS frontend from calling this API
 // from any origin other than the API's own (its default, same-origin-
@@ -179,6 +232,7 @@ builder.Services.AddRateLimiter(options =>
                 Window = TimeSpan.FromMinutes(1),
                 QueueLimit = 0
             }));
+<<<<<<< HEAD
 });
 
 // ============================================================================
@@ -237,11 +291,46 @@ builder.Services.AddHostedService<WelfarePenaltyBackgroundService>();
 // generation for overdue Monthly Contributions - Sprint 1 gap #5) was
 // fully implemented but never registered as a hosted service, so it
 // never actually ran despite the class existing.
+=======
+});
+
+// Configure JWT Authentication
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]!);
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(key)
+    };
+});
+
+builder.Services.AddControllers();
+builder.Services.AddHostedService<WelfarePenaltyBackgroundService>();
+
+// BUG FIX: ContributionComplianceBackgroundService (automatic Fine/Debt
+// generation for overdue Monthly Contributions - Sprint 1 gap #5) was
+// fully implemented but never registered as a hosted service, so it
+// never actually ran despite the class existing.
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 builder.Services.AddHostedService<ContributionComplianceBackgroundService>();
 
 // LOAN ENGINE V2 (item 3/3): LoanSettings.LatePenaltyAmount was a
 // field-only setting until now - LoanPenaltyBackgroundService is what
 // actually reads it and turns an overdue loan into a Fine.
+<<<<<<< HEAD
 builder.Services.AddHostedService<LoanPenaltyBackgroundService>();
 builder.Services.AddEndpointsApiExplorer();
 
@@ -379,3 +468,57 @@ app.Run();
 // kuthibitisha kuwa kila controller inaweza kuundwa - angalia
 // ChamaLink.Tests/ServiceRegistrationTests.cs.
 public partial class Program { }
+=======
+builder.Services.AddHostedService<LoanPenaltyBackgroundService>();
+builder.Services.AddEndpointsApiExplorer();
+
+// Swagger with Authorization Support
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "ChamaLink API", Version = "v1" });
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "Ingiza JWT Token hivi: Bearer {token}",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
+
+var app = builder.Build();
+
+// SECURITY FIX (audit 2.3/2.4): registered first so it wraps every other
+// middleware/controller below it - it is the last line of defence for
+// anything that isn't already handled by a controller's own try/catch.
+app.UseMiddleware<ChamaLink.API.Middleware.GlobalExceptionMiddleware>();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+app.UseCors("Frontend");
+app.UseRateLimiter();
+app.UseAuthentication(); // Must be before UseAuthorization
+app.UseAuthorization();
+app.MapControllers();
+
+app.Run();
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065

@@ -44,6 +44,7 @@ public class WelfareController : ControllerBase
         // GroupMember row in this group, and must actually be a Treasurer
         // or Chairperson - the same two roles trusted to move money in
         // LoanService/WithdrawalService.
+<<<<<<< HEAD
 
         var actorUserId = User.GetUserId();
         await _groupAuth.RequireRoleAsync(actorUserId, dto.GroupId, GroupRole.Treasurer, GroupRole.Chairperson);
@@ -69,6 +70,42 @@ public class WelfareController : ControllerBase
 
         return Ok(new { message = "Salio la Welfare limeongezwa kikamilifu.", entryId = ledgerEntry.Id });
 
+=======
+        try
+        {
+            var actorUserId = User.GetUserId();
+            await _groupAuth.RequireRoleAsync(actorUserId, dto.GroupId, GroupRole.Treasurer, GroupRole.Chairperson);
+
+            var groupMember = await _accountResolver.GetGroupMemberAsync(dto.GroupId, dto.TargetUserId);
+            var welfareAccount = await _accountResolver.GetOrCreateAccountAsync(
+                groupMember.Id, AccountType.SocialFund);
+
+            var ledgerEntry = new LedgerEntry
+            {
+                Id = Guid.NewGuid(),
+                GroupId = dto.GroupId,
+                AccountId = welfareAccount.Id,
+                UserId = dto.TargetUserId,
+                Amount = dto.Amount,
+                Type = TransactionType.WelfareTopUp,
+                Description = "Kujaza salio la Mfuko wa Ustawi (Welfare)",
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.LedgerEntries.Add(ledgerEntry);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Salio la Welfare limeongezwa kikamilifu.", entryId = ledgerEntry.Id });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     }
 }
 

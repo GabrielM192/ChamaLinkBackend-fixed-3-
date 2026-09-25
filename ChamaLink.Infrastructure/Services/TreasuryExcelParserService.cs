@@ -3,8 +3,11 @@ using ChamaLink.Application.DTOs;
 using ChamaLink.Application.Interfaces;
 using ExcelDataReader;
 
+<<<<<<< HEAD
 using ChamaLink.Domain.Exceptions;
 
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 namespace ChamaLink.Infrastructure.Services;
 
 // Parses a treasurer's monthly-grid Excel ledger into TreasuryExcelRowDto
@@ -32,6 +35,7 @@ public class TreasuryExcelParserService : ITreasuryExcelParserService
     {
         var rows = new List<TreasuryExcelRowDto>();
 
+<<<<<<< HEAD
         // FIX (ukaguzi 2026-09-15): ExcelReaderFactory.CreateReader hutupa
         // HeaderException ("Invalid file signature") mtu akipakia faili ambalo
         // si Excel halisi. Hiyo si AppException, kwa hiyo ilikuwa inaangukia
@@ -58,6 +62,11 @@ public class TreasuryExcelParserService : ITreasuryExcelParserService
         }
 
         using var _ = reader;
+=======
+        // Leave the stream open to the caller; ExcelDataReader disposes its
+        // own internal reader on Dispose.
+        using var reader = ExcelReaderFactory.CreateReader(stream);
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
         // Build a 2D snapshot of cells so we can scan rows arbitrarily for
         // the header row and then read member rows. The sheets are small

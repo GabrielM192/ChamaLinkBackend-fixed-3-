@@ -2,7 +2,10 @@ using ChamaLink.Application.DTOs;
 using ChamaLink.Domain;
 using ChamaLink.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+<<<<<<< HEAD
 using ChamaLink.Domain.Exceptions;
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
 namespace ChamaLink.Infrastructure.Services;
 
@@ -34,7 +37,11 @@ public class AnalyticsService
     {
         var group = await _context.Groups.Include(g => g.Settings)
             .FirstOrDefaultAsync(g => g.Id == groupId)
+<<<<<<< HEAD
             ?? throw new NotFoundException("Kikundi hakikupatikana.");
+=======
+            ?? throw new Exception("Kikundi hakikupatikana.");
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
         var target = period ?? DateTime.UtcNow;
         var periodStart = new DateTime(target.Year, target.Month, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -274,7 +281,11 @@ public class AnalyticsService
     public async Task<GroupFinancialSummaryDto> GetGroupFinancialSummaryAsync(Guid groupId)
     {
         var group = await _context.Groups.FirstOrDefaultAsync(g => g.Id == groupId)
+<<<<<<< HEAD
             ?? throw new NotFoundException("Kikundi hakikupatikana.");
+=======
+            ?? throw new Exception("Kikundi hakikupatikana.");
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
         int totalMembers = await _context.GroupMembers.CountAsync(m => m.GroupId == groupId);
         int activeMembers = await _context.GroupMembers
@@ -317,7 +328,11 @@ public class AnalyticsService
             .Include(m => m.User)
             .Include(m => m.Group)
             .FirstOrDefaultAsync(m => m.GroupId == groupId && m.UserId == userId)
+<<<<<<< HEAD
             ?? throw new NotFoundException("Mwanachama hajapatikana kwenye kikundi hiki.");
+=======
+            ?? throw new Exception("Mwanachama hajapatikana kwenye kikundi hiki.");
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
         var savingsAccount = await _context.Accounts
             .FirstOrDefaultAsync(a => a.GroupMemberId == member.Id && a.Type == AccountType.Savings);

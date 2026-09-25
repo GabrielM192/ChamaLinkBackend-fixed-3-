@@ -6,7 +6,10 @@ using ChamaLink.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+<<<<<<< HEAD
 using ChamaLink.Domain.Exceptions;
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
 namespace ChamaLink.Infrastructure.Services;
 
@@ -23,6 +26,7 @@ public class AuthService
 
     public async Task<AuthResponseDto> RegisterAsync(RegisterDto dto)
     {
+<<<<<<< HEAD
         // SECURITY NOTE (ukaguzi 2026-09-15, M-6: user enumeration).
         // Ujumbe huu unamwambia mtu yeyote (bila akaunti) kama email fulani
         // ipo kwenye mfumo - na /api/Auth/register hauna [Authorize], kwa
@@ -36,6 +40,10 @@ public class AuthService
         // kazi ya ziada (inahitaji email service), imeandikwa kwenye ripoti.
         if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
             throw new ConflictException("Email tayari imeshasajiliwa.");
+=======
+        if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
+            throw new Exception("Email tayari imeshasajiliwa.");
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
         var user = new User
         {
@@ -53,6 +61,7 @@ public class AuthService
         return new AuthResponseDto(token, user.Id, user.FullName, user.Email);
     }
 
+<<<<<<< HEAD
     // NEW (ukaguzi 2026-09-15, M-5): rate limit ya 5/dakika kwa IP
     // (Program.cs, policy "auth") inalinda dhidi ya mtu mmoja anayejaribu
     // kwa kasi - lakini HAILINDI dhidi ya mtu anayelenga akaunti MOJA
@@ -95,11 +104,21 @@ public class AuthService
 
         // 2. Kufanikiwa - futa rekodi ya majaribio mabaya.
         LoginAttempts.TryRemove(emailKey, out _);
+=======
+    public async Task<AuthResponseDto> LoginAsync(LoginDto dto)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email)
+            ?? throw new Exception("Email au neno la siri sio sahihi.");
+
+        if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
+            throw new Exception("Email au neno la siri sio sahihi.");
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
         var token = GenerateJwtToken(user);
         return new AuthResponseDto(token, user.Id, user.FullName, user.Email);
     }
 
+<<<<<<< HEAD
     // Kumbuka majaribio mabaya, na ufunge akaunti ikiwa yamezidi kiwango.
     private static ValidationException BadCredentials(LoginDto dto)
     {
@@ -125,6 +144,8 @@ public class AuthService
         return new ValidationException("Email au neno la siri sio sahihi.");
     }
 
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     private string GenerateJwtToken(User user)
     {
         var jwtSettings = _config.GetSection("Jwt");
@@ -137,6 +158,7 @@ public class AuthService
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
+<<<<<<< HEAD
         // CHANGE (ukaguzi 2026-09-15, M-5): muda wa token ulikuwa
         // umewekwa ngumu kuwa siku 7. Sasa unasomwa kutoka configuration
         // (Jwt:ExpiryDays) na chaguo-msingi ni siku 1.
@@ -158,6 +180,12 @@ public class AuthService
         {
             Subject = new ClaimsIdentity(claims),
             Expires = DateTime.UtcNow.AddDays(expiryDays),
+=======
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(claims),
+            Expires = DateTime.UtcNow.AddDays(7),
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
             Issuer = jwtSettings["Issuer"],
             Audience = jwtSettings["Audience"],
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

@@ -1,7 +1,10 @@
 using ChamaLink.Domain;
 using ChamaLink.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+<<<<<<< HEAD
 using ChamaLink.Domain.Exceptions;
+=======
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
 
 namespace ChamaLink.Infrastructure.Services;
 
@@ -88,6 +91,10 @@ public class AccountResolverService
     {
         return await _context.GroupMembers
             .FirstOrDefaultAsync(gm => gm.GroupId == groupId && gm.UserId == userId)
+<<<<<<< HEAD
             ?? throw new NotFoundException("Mwanachama hajapatikana kwenye kikundi hiki.");
+=======
+            ?? throw new Exception("Mwanachama hajapatikana kwenye kikundi hiki.");
+>>>>>>> 771aceb8b48df4de2571e2f935c2a839897c5065
     }
 }
